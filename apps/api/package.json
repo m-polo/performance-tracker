@@ -1,0 +1,17 @@
+{
+  "name": "api",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.1",
+    "hono": "^4.6.3"
+  },
+  "devDependencies": {
+    "@pertrack/eslint-config": "*",
+    "@pertrack/typescript-config": "*",
+    "@types/node": "^20.11.17",
+    "eslint": "^9.11.1",
+    "tsx": "^4.7.1"
+  }
+}
