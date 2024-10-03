@@ -1,9 +1,17 @@
-/** @type {import("eslint").Linter.Config} */
 module.exports = {
-    root: true,
-    extends: ["@pertrack/eslint-config/base.js"],
-    parser: "@typescript-eslint/parser",
-    parserOptions: {
-      project: true,
-    },
-  };
+  root: true,
+  env: {
+    node: true
+  },
+  'extends': [
+    'plugin:react/recommended',
+    'eslint:recommended'
+  ],
+  parserOptions: {
+    ecmaVersion: 2020
+  },
+  rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+  }
+}

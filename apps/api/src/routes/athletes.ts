@@ -1,4 +1,4 @@
-import { Athlete, prisma } from "@pertrack/database";
+import { Athlete, Metric, prisma } from "@pertrack/database";
 import { Hono } from "hono";
 import { jwt } from "hono/jwt";
 import { jwtMiddleware } from "../utils";
@@ -17,8 +17,9 @@ athletes.get("", async (c) => {
 //Get athlete
 athletes.get("/:id", async (c) => {
   const athleteId = c.req.param("id");
-  const athlete: Athlete = await prisma.athlete.findFirstOrThrow({
+  const athlete: Athlete & { metrics: Metric[] } = await prisma.athlete.findFirstOrThrow({
     where: { id: Number(athleteId) },
+    include: {metrics: true}
   });
 
   c.status(200);
