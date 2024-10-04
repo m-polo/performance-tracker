@@ -6,8 +6,8 @@ import {
   IonSelect,
   IonSelectOption,
 } from "@ionic/react";
-import { Metric, METRIC_TYPES, UNITS } from "../../interfaces";
 import { useForm } from "react-hook-form";
+import { Metric, METRIC_TYPES, UNITS } from "../../shared/interfaces";
 
 type MetricFormProps = {
   onMetricCreate: (metric: Metric, e: any) => void;
@@ -18,10 +18,11 @@ export default function MetricForm({
   onMetricCreate,
   formRef,
 }: MetricFormProps) {
-  const { handleSubmit, register } = useForm<Metric>();
-
-  const units = Object.values(UNITS);
-  const metricTypes = Object.values(METRIC_TYPES);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<Metric>();
 
   return (
     <IonGrid>
@@ -37,12 +38,15 @@ export default function MetricForm({
                 required: "Metric type must be added",
               })}
             >
-              {metricTypes.map((metricType) => (
+              {Object.values(METRIC_TYPES).map((metricType) => (
                 <IonSelectOption value={metricType}>
                   {metricType.toLowerCase().replace("_", " ")}
                 </IonSelectOption>
               ))}
             </IonSelect>
+            {errors?.metricType && (
+              <p role="alert">{errors.metricType.message}</p>
+            )}
           </IonCol>
           <IonCol>
             <IonInput
@@ -50,7 +54,9 @@ export default function MetricForm({
               label="Value"
               labelPlacement="floating"
               fill="outline"
+              type="number"
             />
+            {errors?.value && <p role="alert">{errors.value.message}</p>}
           </IonCol>
           <IonCol>
             <IonSelect
@@ -60,12 +66,13 @@ export default function MetricForm({
               fill="outline"
               {...register("unit", { required: "Unit must be added" })}
             >
-              {units.map((unit) => (
+              {Object.values(UNITS).map((unit) => (
                 <IonSelectOption value={unit}>
                   {unit.toLowerCase().replace("_", " ")}
                 </IonSelectOption>
               ))}
             </IonSelect>
+            {errors?.unit && <p role="alert">{errors.unit.message}</p>}
           </IonCol>
         </IonRow>
       </form>

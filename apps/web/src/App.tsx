@@ -41,26 +41,64 @@ import "@ionic/react/css/palettes/dark.system.css";
 import AthletesDashboard from "./pages/AthletesDashboard/AthletesDashboard";
 import "./theme/variables.css";
 
-setupIonicReact();
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
+import axios from "axios";
+import { createContext, useEffect, useState } from "react";
+
+setupIonicReact({ toastDuration: 1500 });
+
+const queryClient = new QueryClient();
+export const AuthContext = createContext<string>("");
 
 export default function App() {
+  const [token, setToken] = useState<string>("");
+  const userName: string = "Manuel Polo";
+  const email: string = "manuelpolo@gmail.com";
+
+  const { data } = useQuery<string>(
+    {
+      queryKey: ["token"],
+      queryFn: () =>
+        axios
+          .get(
+            `http://localhost:3000/auth/token?name=${userName}&email=${email}`
+          )
+          .then((res) => res.data),
+    },
+    queryClient
+  );
+
+  useEffect(() => {
+    if (data) {
+      setToken(data);
+    }
+  }, [data]);
+
   return (
-    <IonApp>
-      <IonReactRouter>
-        <IonHeader>
-          <IonToolbar>
-            <Link to="/dashboard" style={{ textDecoration: "none" }}>
-              <IonTitle>Performance Tracker</IonTitle>
-            </Link>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent>
-          <IonRouterOutlet>
-            <Route exact path="/dashboard" component={AthletesDashboard} />
-            <Route render={() => <Redirect to="/dashboard" />} />
-          </IonRouterOutlet>
-        </IonContent>
-      </IonReactRouter>
-    </IonApp>
+    <QueryClientProvider client={queryClient}>
+      <AuthContext.Provider value={token}>
+        <IonApp>
+          <IonReactRouter>
+            <IonHeader>
+              <IonToolbar>
+                <Link to="/dashboard" style={{ textDecoration: "none" }}>
+                  <IonTitle>Performance Tracker</IonTitle>
+                </Link>
+              </IonToolbar>
+            </IonHeader>
+            <IonContent>
+              <IonRouterOutlet>
+                <Route exact path="/dashboard" component={AthletesDashboard} />
+                <Route render={() => <Redirect to="/dashboard" />} />
+              </IonRouterOutlet>
+            </IonContent>
+          </IonReactRouter>
+        </IonApp>
+      </AuthContext.Provider>
+    </QueryClientProvider>
   );
 }

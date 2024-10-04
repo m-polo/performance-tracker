@@ -1,82 +1,109 @@
-import { Athlete, Metric, prisma } from "@pertrack/database";
+import { Athlete, Metric, Prisma, prisma } from "@pertrack/database";
 import { Hono } from "hono";
-import { jwt } from "hono/jwt";
-import { jwtMiddleware } from "../utils";
+import { HTTPException } from "hono/http-exception";
 import metrics from "./metrics";
+import { authMiddleware } from "../../middlewares";
 
 const athletes: Hono = new Hono();
 
-//Get all athletes
 athletes.get("", async (c) => {
-  const athletes: Athlete[] = await prisma.athlete.findMany();
-  c.status(200);
+  try {
+    const searchText: string | undefined = c.req.query("searchText");
+    let whereClause: Prisma.AthleteWhereInput = {};
 
-  return c.json(athletes);
+    if (searchText) {
+      whereClause.OR = [
+        {
+          name: { contains: searchText, mode: "insensitive" },
+        },
+        {
+          team: { contains: searchText, mode: "insensitive" },
+        },
+      ];
+    }
+
+    const athletes: Athlete[] = await prisma.athlete.findMany({
+      where: whereClause,
+    });
+
+    return c.json(athletes, 200);
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: "Error getting athletes list",
+    });
+  }
 });
 
-//Get athlete
 athletes.get("/:id", async (c) => {
-  const athleteId = c.req.param("id");
-  const athlete: Athlete & { metrics: Metric[] } = await prisma.athlete.findFirstOrThrow({
-    where: { id: Number(athleteId) },
-    include: {metrics: true}
-  });
+  try {
+    const athleteId = c.req.param("id");
+    const athlete: Athlete & { metrics: Metric[] } =
+      await prisma.athlete.findFirstOrThrow({
+        where: { id: Number(athleteId) },
+        include: { metrics: true },
+      });
 
-  c.status(200);
-
-  return c.json(athlete);
+    return c.json(athlete, 200);
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: "Error getting athlete",
+    });
+  }
 });
 
-//Create athlete
-athletes.post("", jwtMiddleware(), async (c) => {
-  const athlete: Athlete = await c.req.json();
-  const { id } = await prisma.athlete.create({
-    data: athlete,
-  });
+athletes.post("", authMiddleware(), async (c) => {
+  try {
+    const athlete: Athlete = await c.req.json<Athlete>();
+    const { id } = await prisma.athlete.create({
+      data: {
+        ...athlete,
+        age: Number(athlete.age),
+      },
+    });
 
-  c.status(201);
-
-  return c.json({ id });
+    return c.json({ id, athlete }, 201);
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: "Error adding athlete",
+    });
+  }
 });
 
-//Edit athlete
-athletes.put(
-  "/:id",
-  jwt({
-    secret: "it-is-very-secret",
-  }),
-  async (c) => {
+athletes.put("/:id", authMiddleware(), async (c) => {
+  try {
     const athleteId = c.req.param("id");
     const athlete: Athlete = await c.req.json();
 
     const { id } = await prisma.athlete.update({
-      data: athlete,
+      data: {
+        ...athlete,
+        age: Number(athlete.age),
+      },
       where: { id: Number(athleteId) },
     });
 
-    c.status(200);
-
-    return c.json(id);
+    return c.json(id, 200);
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: "Error editing athlete",
+    });
   }
-);
+});
 
-//Delete athlete
-athletes.delete(
-  "/:id",
-  jwt({
-    secret: "it-is-very-secret",
-  }),
-  async (c) => {
+athletes.delete("/:id", authMiddleware(), async (c) => {
+  try {
     const athleteId = c.req.param("id");
     await prisma.athlete.delete({
       where: { id: Number(athleteId) },
     });
 
-    c.status(204);
-
-    return;
+    return c.body(null, 204);
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: "Error deleting athlete",
+    });
   }
-);
+});
 
 athletes.route("/:id/metrics", metrics);
 

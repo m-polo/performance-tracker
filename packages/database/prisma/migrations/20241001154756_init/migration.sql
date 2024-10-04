@@ -27,4 +27,4 @@ CREATE TABLE "Metric" (
 );
 
 -- AddForeignKey
-ALTER TABLE "Metric" ADD CONSTRAINT "Metrics_athleteId_fkey" FOREIGN KEY ("athleteId") REFERENCES "Athlete"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Metric" ADD CONSTRAINT "Metrics_athleteId_fkey" FOREIGN KEY ("athleteId") REFERENCES "Athlete"("id") ON DELETE CASCADE ON UPDATE CASCADE;

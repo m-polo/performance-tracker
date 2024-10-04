@@ -10,12 +10,12 @@ import {
   IonModal,
 } from "@ionic/react";
 
-import { build, eye, trash, create } from "ionicons/icons";
+import { build, create, eye, trash } from "ionicons/icons";
 import { useState } from "react";
+import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
 import AthleteCompleteInfoModal from "../AthleteCompleteInfoModal/AthleteCompleteInfoModal";
 import AthleteDeletionModal from "../AthleteDeletionModal/AthleteDeletionModal";
 import AthleteDetailsModal from "../AthleteDetailsModal/AthleteDetailsModal";
-import { Athlete, AthleteBasicsDetails } from "../../interfaces";
 
 type AthleteCardProps = {
   athleteInfo: Athlete;
@@ -26,7 +26,7 @@ type AthleteCardProps = {
 export default function AthleteCard({
   athleteInfo,
   onAthleteDelete,
-  onAthleteEdit
+  onAthleteEdit,
 }: AthleteCardProps) {
   const [isDeletionModalOpen, setIsDeletionModalOpen] =
     useState<boolean>(false);
@@ -84,7 +84,7 @@ export default function AthleteCard({
         isOpen={isAthleteCompleteInfoOpen}
         onDidDismiss={() => setIsAthleteCompleteInfoOpen(false)}
       >
-        <AthleteCompleteInfoModal athlete={athleteInfo} />
+        <AthleteCompleteInfoModal athleteId={id!} />
       </IonModal>
 
       <IonModal
@@ -93,7 +93,10 @@ export default function AthleteCard({
       >
         <AthleteDetailsModal
           athlete={athleteInfo}
-          onAthleteSubmit={onAthleteEdit}
+          onAthleteSubmit={(data) => {
+            onAthleteEdit(data);
+            setIsAthleteDetailsOpen(false);
+          }}
         />
       </IonModal>
     </IonCard>

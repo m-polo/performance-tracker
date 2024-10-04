@@ -1,41 +1,50 @@
 import { Metric, MetricTypes, Prisma, prisma } from "@pertrack/database";
 import { Hono } from "hono";
-import { jwtMiddleware } from "../utils";
+import { HTTPException } from "hono/http-exception";
+import { authMiddleware } from "../../middlewares";
 
 const metrics: Hono = new Hono();
 
-// Get all metrics from an athlete
 metrics.get("", async (c) => {
-  const athleteId: string | undefined = c.req.param("id");
-  const metricType: string | undefined = c.req.query("metricType");
+  try {
+    const athleteId: string | undefined = c.req.param("id");
+    const metricType: MetricTypes | undefined = c.req.query(
+      "metricType"
+    ) as MetricTypes;
 
-  let whereClause: Prisma.MetricWhereInput = { athleteId: Number(athleteId) };
-  if (metricType) {
-    whereClause.AND = {
-      metricType:
-        MetricTypes[metricType.toUpperCase() as keyof typeof MetricTypes],
-    };
+    let whereClause: Prisma.MetricWhereInput = { athleteId: Number(athleteId) };
+    if (metricType) {
+      whereClause.AND = {
+        metricType,
+      };
+    }
+
+    const metrics: Metric[] = await prisma.metric.findMany({
+      where: whereClause,
+    });
+
+    return c.json(metrics, 200);
+  } catch (error) {
+    throw new HTTPException(500, { message: "Error getting athlete metrics" });
   }
-
-  const metrics: Metric[] = await prisma.metric.findMany({
-    where: whereClause,
-  });
-
-  c.status(200);
-
-  return c.json(metrics);
 });
 
-// Add a metric to an athlete
-metrics.post("", jwtMiddleware(), async (c) => {
-  const metric: Metric = await c.req.json();
-  const { id } = await prisma.metric.create({
-    data: metric,
-  });
+metrics.post("", authMiddleware(), async (c) => {
+  try {
+    const athleteId: string | undefined = c.req.param("id");
+    const metric: Metric = await c.req.json<Metric>();
+    const { id } = await prisma.metric.create({
+      data: {
+        ...metric,
+        value: Number(metric.value),
+        athleteId: Number(athleteId!),
+      },
+    });
 
-  c.status(201);
-
-  return c.json({ id });
+    return c.json({ id }, 201);
+  } catch (error) {
+    throw new HTTPException(500, { message: "Error adding metric to an athlete" });
+  }
 });
 
 export default metrics;

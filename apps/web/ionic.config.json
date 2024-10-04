@@ -1,5 +1,6 @@
 {
   "name": "web",
   "integrations": {},
-  "type": "react-vite"
+  "type": "react-vite",
+  "toastDuration": 1500
 }

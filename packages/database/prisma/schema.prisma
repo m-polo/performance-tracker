@@ -23,7 +23,7 @@ model Metric {
     unit       Units
     timestamp  DateTime @default(now())
 
-    athlete   Athlete @relation(fields: [athleteId], references: [id])
+    athlete   Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     athleteId Int
 }
 

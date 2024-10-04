@@ -8,87 +8,81 @@ import {
   IonSearchbar,
   useIonToast,
 } from "@ionic/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { add, close } from "ionicons/icons";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../App";
 import AthleteCard from "../../components/AthleteCard/AthleteCard";
 import AthleteDetailsModal from "../../components/AthleteDetailsModal/AthleteDetailsModal";
-import { Athlete, AthleteBasicsDetails } from "../../interfaces";
-import { seedAthletes } from "../../seed";
+import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
+import { errorToast, successToast } from "../../shared/toasts";
+
+const baseUrl: string = import.meta.env.VITE_BASE_URL;
 
 export default function AthletesDashboard() {
   const [present] = useIonToast();
+  const token: string = useContext(AuthContext);
+  const queryClient = useQueryClient();
   const [athletes, setAthletes] = useState<Athlete[]>([]);
-  const [filteredAthletes, setFilteredAthletes] = useState<Athlete[]>([]);
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
   const [isAthleteDetailsOpen, setIsAthleteDetailsOpen] =
     useState<boolean>(false);
 
-  useEffect(() => {
-    if (athletes.length === 0) {
-      setAthletes(seedAthletes());
-    }
-
-    if (searchInput) {
-      setFilteredAthletes(
-        athletes.filter(
-          (athlete) =>
-            athlete.name.toLowerCase().includes(searchInput) ||
-            athlete.team.toLowerCase().includes(searchInput)
+  const { data } = useQuery<Athlete[]>({
+    queryKey: ["athleteList", searchText],
+    queryFn: () =>
+      axios
+        .get(
+          `${baseUrl}/athletes${searchText ? `?searchText=${searchText}` : ""}`
         )
-      );
-    } else {
-      setFilteredAthletes(athletes);
+        .then((res) => res.data)
+        .catch(() => present(errorToast("Error getting athletes"))),
+  });
+
+  const createAthleteMutation = useMutation({
+    mutationFn: async (newAthlete: AthleteBasicsDetails) =>
+      await axios.post(`${baseUrl}/athletes`, newAthlete, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    onSuccess: () => {
+      present(successToast("Athlete added correctly"));
+      queryClient.invalidateQueries({ queryKey: ["athleteList"] });
+      setIsAthleteDetailsOpen(false);
+    },
+    onError: () => present(errorToast("Error adding athlete")),
+  });
+
+  const deleteAthleteMutation = useMutation({
+    mutationFn: async (athleteDeletedId: number) =>
+      await axios.delete(`${baseUrl}/athletes/${athleteDeletedId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    onSuccess: () => {
+      present(successToast("Athlete deleted correctly"));
+      queryClient.invalidateQueries({ queryKey: ["athleteList"] });
+      setIsAthleteDetailsOpen(false);
+    },
+    onError: () => present(errorToast("Error deleting athlete")),
+  });
+
+  const updateAthleteMutation = useMutation({
+    mutationFn: async (athlete: AthleteBasicsDetails) =>
+      await axios.put(`${baseUrl}/athletes/${athlete.id}`, athlete, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    onSuccess: () => {
+      present(successToast("Athlete edited correctly"));
+      queryClient.invalidateQueries({ queryKey: ["athleteList"] });
+    },
+    onError: () => present(errorToast("Error editing athlete")),
+  });
+
+  useEffect(() => {
+    if (data) {
+      setAthletes(data);
     }
-  }, [athletes, searchInput]);
-
-  function handleOnInput(event: Event) {
-    let input = "";
-    const target = event.target as HTMLIonSearchbarElement;
-    if (target) input = target.value!.toLowerCase();
-
-    setSearchInput(input);
-  }
-
-  function handleOnAthleteDelete(athleteDeletedId: number) {
-    setAthletes(athletes.filter(({ id }) => id !== athleteDeletedId));
-
-    present({
-      message: "Athlete deleted correctly",
-      duration: 1500,
-      position: "top",
-    });
-  }
-
-  function handleOnAthleteCreate(athlete: AthleteBasicsDetails) {
-    setAthletes([...athletes, athlete]);
-
-    present({
-      message: "Athlete added correctly",
-      duration: 1500,
-      position: "top",
-    });
-
-    setIsAthleteDetailsOpen(false);
-  }
-
-  function handleOnAthleteEdit(athlete: AthleteBasicsDetails) {
-    const athleteEdited: Athlete = athletes.find(
-      ({ id }) => id === athlete.id
-    )!;
-    athleteEdited.age = athlete.age;
-    athleteEdited.name = athlete.name;
-    athleteEdited.team = athlete.team;
-
-    setAthletes([...athletes]);
-
-    present({
-      message: "Athlete edited correctly",
-      duration: 1500,
-      position: "top",
-    });
-
-    setIsAthleteDetailsOpen(false);
-  }
+  }, [data]);
 
   return (
     <IonPage>
@@ -96,7 +90,7 @@ export default function AthletesDashboard() {
         <div>
           <IonSearchbar
             debounce={1000}
-            onIonInput={(ev) => handleOnInput(ev)}
+            onIonInput={(e) => setSearchText(e.target.value!)}
             showClearButton="never"
             showCancelButton="always"
             cancelButtonIcon={close}
@@ -104,17 +98,17 @@ export default function AthletesDashboard() {
           />
           <IonFab slot="fixed" vertical="top" horizontal="end">
             <IonFabButton onClick={() => setIsAthleteDetailsOpen(true)}>
-              <IonIcon icon={add}></IonIcon>
+              <IonIcon icon={add} />
             </IonFabButton>
           </IonFab>
         </div>
 
-        {filteredAthletes.map((athlete) => (
+        {athletes.map((athlete) => (
           <AthleteCard
             athleteInfo={athlete}
             key={athlete.id}
-            onAthleteDelete={handleOnAthleteDelete}
-            onAthleteEdit={handleOnAthleteEdit}
+            onAthleteDelete={(id) => deleteAthleteMutation.mutate(id)}
+            onAthleteEdit={(athlete) => updateAthleteMutation.mutate(athlete)}
           />
         ))}
 
@@ -122,7 +116,9 @@ export default function AthletesDashboard() {
           isOpen={isAthleteDetailsOpen}
           onDidDismiss={() => setIsAthleteDetailsOpen(false)}
         >
-          <AthleteDetailsModal onAthleteSubmit={handleOnAthleteCreate} />
+          <AthleteDetailsModal
+            onAthleteSubmit={(athlete) => createAthleteMutation.mutate(athlete)}
+          />
         </IonModal>
       </IonContent>
     </IonPage>

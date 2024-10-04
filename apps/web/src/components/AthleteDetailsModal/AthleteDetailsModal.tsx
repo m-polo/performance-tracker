@@ -1,6 +1,6 @@
 import { IonButton, IonCol, IonGrid, IonInput, IonRow } from "@ionic/react";
 import { useForm } from "react-hook-form";
-import { Athlete, AthleteBasicsDetails } from "../../interfaces";
+import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
 
 type AthleteDetailsModalProps = {
   athlete?: Athlete;
@@ -9,7 +9,7 @@ type AthleteDetailsModalProps = {
 
 export default function AthleteDetailsModal({
   athlete,
-  onAthleteSubmit: onAthleteCreate,
+  onAthleteSubmit,
 }: AthleteDetailsModalProps) {
   const { handleSubmit, register } = useForm<AthleteBasicsDetails>({
     defaultValues: {
@@ -21,31 +21,41 @@ export default function AthleteDetailsModal({
   });
 
   return (
-    <form onSubmit={handleSubmit(onAthleteCreate)} className="ion-padding">
+    <form onSubmit={handleSubmit(onAthleteSubmit)} className="ion-padding">
       <IonGrid>
         <IonRow className="ion-padding">
           <IonInput
-            {...register("name", { required: "Name must be added" })}
+            {...register("name")}
             labelPlacement="floating"
             label="Name"
             fill="outline"
+            required
+            maxlength={50}
+            counter
           />
         </IonRow>
         <IonRow>
           <IonCol className="ion-padding">
             <IonInput
-              {...register("age", { required: "Age must be added" })}
+              {...register("age")}
               labelPlacement="floating"
               label="Age"
               fill="outline"
+              required
+              min={0}
+              max={100}
+              type="number"
             />
           </IonCol>
           <IonCol className="ion-padding">
             <IonInput
-              {...register("team", { required: "Team must be added" })}
+              {...register("team")}
               labelPlacement="floating"
               label="Team"
               fill="outline"
+              required
+              maxlength={50}
+              counter
             />
           </IonCol>
         </IonRow>

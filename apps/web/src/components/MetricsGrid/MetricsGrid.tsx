@@ -1,7 +1,6 @@
-import { IonButton, IonCol, IonGrid, IonIcon, IonRow } from "@ionic/react";
-import { addCircle, checkmarkCircle, closeCircle } from "ionicons/icons";
-import { Metric } from "../../interfaces";
+import { IonCol, IonGrid, IonRow } from "@ionic/react";
 import { ReactNode } from "react";
+import { Metric } from "../../shared/interfaces";
 
 type MetricsGridProps = {
   metrics: Metric[];
@@ -12,6 +11,7 @@ export default function MetricsGrid({ children, metrics }: MetricsGridProps) {
   return (
     <IonGrid style={{ marginTop: "60px" }}>
       {children}
+
       <IonRow>
         <IonCol>
           <strong>Metric type</strong>

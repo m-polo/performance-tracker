@@ -1,21 +1,32 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import athletes from "./routes/athletes";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { timeout } from "hono/timeout";
+import athletes from "./routes/athletes";
+import auth from "./routes/auth";
 
-const app: Hono = new Hono();
+const app = new Hono();
+const port: number = 3000;
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+app.use(
+  "*",
+  cors({
+    origin: ["*"],
+  })
+);
 
 app.use(logger());
-app.use(timeout(5000))
+app.use(timeout(5000));
 
+app.get("/", (c) => c.text("API is working"));
+app.route("/auth", auth);
 app.route("/athletes", athletes);
 
-const port: number = 3000;
+app.notFound((c) => {
+  return c.text("Endpoint does not exist");
+});
+
 console.log(`Server is running on port ${port}`);
 
 serve({
