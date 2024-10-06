@@ -1,9 +1,9 @@
 {
   "extends": "@pertrack/typescript-config/base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noEmit": true,
-  }
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+  },
+    "include": ["**/*.ts", "**/*.tsx"],
+    "exclude": ["node_modules"]
 }

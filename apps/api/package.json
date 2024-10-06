@@ -1,16 +1,20 @@
 {
   "name": "api",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "clean": "rm -rf dist",
+    "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.1",
-    "hono": "^4.6.3"
+    "hono": "^4.6.3",
+    "@pertrack/database": "*"
   },
   "devDependencies": {
     "@pertrack/eslint-config": "*",
     "@pertrack/typescript-config": "*",
-    "@pertrack/database": "*",
     "@types/node": "^20.11.17",
     "eslint": "^9.11.1",
     "tsx": "^4.7.1"

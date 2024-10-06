@@ -1,6 +1,12 @@
 {
-  "extends": "@pertrack/typescript-config/base.json",
+  "extends": "@pertrack/typescript-config/react-library.json",
   "compilerOptions": {
-    "types": ["node"]
-  }
+  "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": [
+      "node"
+    ],
+    "jsxImportSource": "hono/jsx",
+  },
 }
