@@ -8,6 +8,7 @@ import {
 } from "@ionic/react";
 import { useForm } from "react-hook-form";
 import { Metric, METRIC_TYPES, UNITS } from "../../shared/interfaces";
+import capitalizeText from "../../shared/utils";
 
 type MetricFormProps = {
   onMetricCreate: (metric: Metric, e: any) => void;
@@ -38,9 +39,9 @@ export default function MetricForm({
                 required: "Metric type must be added",
               })}
             >
-              {Object.values(METRIC_TYPES).map((metricType) => (
-                <IonSelectOption value={metricType}>
-                  {metricType.toLowerCase().replace("_", " ")}
+              {Object.values(METRIC_TYPES).map((metricType, index) => (
+                <IonSelectOption value={metricType} key={index}>
+                  {capitalizeText(metricType)}
                 </IonSelectOption>
               ))}
             </IonSelect>
@@ -66,9 +67,9 @@ export default function MetricForm({
               fill="outline"
               {...register("unit", { required: "Unit must be added" })}
             >
-              {Object.values(UNITS).map((unit) => (
-                <IonSelectOption value={unit}>
-                  {unit.toLowerCase().replace("_", " ")}
+              {Object.values(UNITS).map((unit, index) => (
+                <IonSelectOption value={unit}key={index}>
+                  {capitalizeText(unit)}
                 </IonSelectOption>
               ))}
             </IonSelect>

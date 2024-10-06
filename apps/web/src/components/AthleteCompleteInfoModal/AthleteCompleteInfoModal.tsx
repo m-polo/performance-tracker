@@ -16,12 +16,11 @@ import { Athlete, Metric, METRIC_TYPES } from "../../shared/interfaces";
 import { errorToast, successToast } from "../../shared/toasts";
 import MetricForm from "../MetricForm/MetricForm";
 import MetricsGrid from "../MetricsGrid/MetricsGrid";
+import capitalizeText from "../../shared/utils";
 
 type AthleteCompleteInfoModalProps = {
   athleteId: number;
 };
-
-const baseUrl: string = import.meta.env.VITE_BASE_URL;
 
 export default function AthleteCompleteInfoModal({
   athleteId,
@@ -35,6 +34,8 @@ export default function AthleteCompleteInfoModal({
   const token: string = useContext(AuthContext);
   const formRef = useRef<HTMLFormElement>();
 
+  const baseUrl: string = import.meta.env.VITE_BASE_URL;
+
   const athleteQuery = useQuery<Athlete>({
     queryKey: ["athleteCompleteInfo", athleteId],
     queryFn: () =>
@@ -44,7 +45,7 @@ export default function AthleteCompleteInfoModal({
           .catch(() => present(errorToast("Error getting athlete info")))
       ),
   });
-  
+
   const filterMetricsQuery = useQuery<Metric[]>({
     queryKey: ["filterAthleteMetrics", athleteId, metricTypeFilter],
     queryFn: () =>
@@ -59,12 +60,12 @@ export default function AthleteCompleteInfoModal({
   const { mutate } = useMutation({
     mutationFn: async (newMetric: Metric) => {
       return await axios.post(
-        `${baseUrl}/athletes/${athleteId}/metrics`,
+        `${import.meta.env.VITE_BASE_URL}/athletes/${athleteId}/metrics`,
         newMetric,
         { headers: { Authorization: `Bearer ${token}` } }
       );
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
       present(successToast("Metric added correctly"));
       queryClient.invalidateQueries({ queryKey: ["athleteCompleteInfo"] });
       setShowForm(false);
@@ -73,16 +74,12 @@ export default function AthleteCompleteInfoModal({
   });
 
   useEffect(() => {
-    if (athleteQuery.data) {
-      setAthleteInfo(athleteQuery.data);
-      setAthleteMetrics(athleteQuery.data.metrics);
-    }
+    setAthleteInfo(athleteQuery?.data);
+    setAthleteMetrics(athleteQuery?.data?.metrics);
   }, [athleteQuery.data]);
 
   useEffect(() => {
-    if (filterMetricsQuery.data) {
-      setAthleteMetrics(filterMetricsQuery.data);
-    }
+    setAthleteMetrics(filterMetricsQuery?.data);
   }, [filterMetricsQuery.data]);
 
   return (
@@ -107,9 +104,9 @@ export default function AthleteCompleteInfoModal({
                     setMetricTypeFilter(e.target.value! as METRIC_TYPES)
                   }
                 >
-                  {Object.values(METRIC_TYPES).map((metricType) => (
-                    <IonSelectOption value={metricType}>
-                      {metricType.toLowerCase().replace("_", " ")}
+                  {Object.values(METRIC_TYPES).map((metricType, index) => (
+                    <IonSelectOption value={metricType} key={index}>
+                      {capitalizeText(metricType)}
                     </IonSelectOption>
                   ))}
                 </IonSelect>
@@ -149,7 +146,7 @@ export default function AthleteCompleteInfoModal({
         ) : null}
         {showForm ? (
           <MetricForm
-            onMetricCreate={(metric) => mutate(metric)}
+            onMetricCreate={(metric: Metric) => mutate(metric)}
             formRef={formRef}
           />
         ) : null}

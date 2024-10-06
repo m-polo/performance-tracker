@@ -1,6 +1,7 @@
 import { IonCol, IonGrid, IonRow } from "@ionic/react";
 import { ReactNode } from "react";
 import { Metric } from "../../shared/interfaces";
+import capitalizeText from "../../shared/utils";
 
 type MetricsGridProps = {
   metrics: Metric[];
@@ -23,12 +24,12 @@ export default function MetricsGrid({ children, metrics }: MetricsGridProps) {
           <strong>Unit</strong>
         </IonCol>
       </IonRow>
-      {metrics.map(({ metricType, value, unit }: Metric) => {
+      {metrics.map(({ id, metricType, value, unit }: Metric) => {
         return (
-          <IonRow>
-            <IonCol>{metricType.toLowerCase().replace("_", " ")}</IonCol>
+          <IonRow key={id}>
+            <IonCol>{capitalizeText(metricType)}</IonCol>
             <IonCol>{value}</IonCol>
-            <IonCol>{unit.toLowerCase().replace("_", " ")}</IonCol>
+            <IonCol>{capitalizeText(unit)}</IonCol>
           </IonRow>
         );
       })}

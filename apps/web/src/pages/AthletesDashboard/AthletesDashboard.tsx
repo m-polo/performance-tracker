@@ -9,25 +9,30 @@ import {
   useIonToast,
 } from "@ionic/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { add, close } from "ionicons/icons";
-import { useContext, useEffect, useState } from "react";
+import { lazy, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../App";
 import AthleteCard from "../../components/AthleteCard/AthleteCard";
-import AthleteDetailsModal from "../../components/AthleteDetailsModal/AthleteDetailsModal";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
 import { errorToast, successToast } from "../../shared/toasts";
 
-const baseUrl: string = import.meta.env.VITE_BASE_URL;
+const AthleteDetailsModal = lazy(
+  () => import("../../components/AthleteDetailsModal/AthleteDetailsModal")
+);
 
 export default function AthletesDashboard() {
   const [present] = useIonToast();
   const token: string = useContext(AuthContext);
   const queryClient = useQueryClient();
+  const createModal = useRef<HTMLIonModalElement>(null);
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [searchText, setSearchText] = useState<string>("");
-  const [isAthleteDetailsOpen, setIsAthleteDetailsOpen] =
-    useState<boolean>(false);
+
+  const baseUrl: string = import.meta.env.VITE_BASE_URL;
+  const authHeader: AxiosRequestConfig = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
 
   const { data } = useQuery<Athlete[]>({
     queryKey: ["athleteList", searchText],
@@ -42,35 +47,27 @@ export default function AthletesDashboard() {
 
   const createAthleteMutation = useMutation({
     mutationFn: async (newAthlete: AthleteBasicsDetails) =>
-      await axios.post(`${baseUrl}/athletes`, newAthlete, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
+      await axios.post(`${baseUrl}/athletes`, newAthlete, authHeader),
     onSuccess: () => {
       present(successToast("Athlete added correctly"));
       queryClient.invalidateQueries({ queryKey: ["athleteList"] });
-      setIsAthleteDetailsOpen(false);
     },
     onError: () => present(errorToast("Error adding athlete")),
   });
 
   const deleteAthleteMutation = useMutation({
     mutationFn: async (athleteDeletedId: number) =>
-      await axios.delete(`${baseUrl}/athletes/${athleteDeletedId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
+      await axios.delete(`${baseUrl}/athletes/${athleteDeletedId}`, authHeader),
     onSuccess: () => {
       present(successToast("Athlete deleted correctly"));
       queryClient.invalidateQueries({ queryKey: ["athleteList"] });
-      setIsAthleteDetailsOpen(false);
     },
     onError: () => present(errorToast("Error deleting athlete")),
   });
 
   const updateAthleteMutation = useMutation({
     mutationFn: async (athlete: AthleteBasicsDetails) =>
-      await axios.put(`${baseUrl}/athletes/${athlete.id}`, athlete, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
+      await axios.put(`${baseUrl}/athletes/${athlete.id}`, athlete, authHeader),
     onSuccess: () => {
       present(successToast("Athlete edited correctly"));
       queryClient.invalidateQueries({ queryKey: ["athleteList"] });
@@ -97,7 +94,7 @@ export default function AthletesDashboard() {
             placeholder="Search athlete or team"
           />
           <IonFab slot="fixed" vertical="top" horizontal="end">
-            <IonFabButton onClick={() => setIsAthleteDetailsOpen(true)}>
+            <IonFabButton id="create-modal">
               <IonIcon icon={add} />
             </IonFabButton>
           </IonFab>
@@ -112,12 +109,12 @@ export default function AthletesDashboard() {
           />
         ))}
 
-        <IonModal
-          isOpen={isAthleteDetailsOpen}
-          onDidDismiss={() => setIsAthleteDetailsOpen(false)}
-        >
+        <IonModal trigger="create-modal" ref={createModal}>
           <AthleteDetailsModal
-            onAthleteSubmit={(athlete) => createAthleteMutation.mutate(athlete)}
+            onAthleteSubmit={(athlete: AthleteBasicsDetails) => {
+              createAthleteMutation.mutate(athlete);
+              createModal.current?.dismiss();
+            }}
           />
         </IonModal>
       </IonContent>

@@ -11,11 +11,18 @@ import {
 } from "@ionic/react";
 
 import { build, create, eye, trash } from "ionicons/icons";
-import { useState } from "react";
+import { lazy, useRef } from "react";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
-import AthleteCompleteInfoModal from "../AthleteCompleteInfoModal/AthleteCompleteInfoModal";
-import AthleteDeletionModal from "../AthleteDeletionModal/AthleteDeletionModal";
-import AthleteDetailsModal from "../AthleteDetailsModal/AthleteDetailsModal";
+
+const AthleteCompleteInfoModal = lazy(
+  () => import("../AthleteCompleteInfoModal/AthleteCompleteInfoModal")
+);
+const AthleteDeletionModal = lazy(
+  () => import("../AthleteDeletionModal/AthleteDeletionModal")
+);
+const AthleteDetailsModal = lazy(
+  () => import("../AthleteDetailsModal/AthleteDetailsModal")
+);
 
 type AthleteCardProps = {
   athleteInfo: Athlete;
@@ -28,12 +35,9 @@ export default function AthleteCard({
   onAthleteDelete,
   onAthleteEdit,
 }: AthleteCardProps) {
-  const [isDeletionModalOpen, setIsDeletionModalOpen] =
-    useState<boolean>(false);
-  const [isAthleteCompleteInfoOpen, setIsAthleteCompleteInfoOpen] =
-    useState<boolean>(false);
-  const [isAthleteDetailsOpen, setIsAthleteDetailsOpen] =
-    useState<boolean>(false);
+  const deleteModal = useRef<HTMLIonModalElement>(null);
+  const completeInfoModal = useRef<HTMLIonModalElement>(null);
+  const detailsModal = useRef<HTMLIonModalElement>(null);
 
   const { id, name, age, team }: Athlete = athleteInfo;
 
@@ -50,52 +54,39 @@ export default function AthleteCard({
             <IonIcon icon={build}></IonIcon>
           </IonFabButton>
           <IonFabList side="start">
-            <IonFabButton onClick={() => setIsAthleteCompleteInfoOpen(true)}>
+            <IonFabButton id={`complete-info-modal-${id}`}>
               <IonIcon icon={eye}></IonIcon>
             </IonFabButton>
-            <IonFabButton
-              onClick={() => {
-                setIsAthleteDetailsOpen(true);
-              }}
-            >
+            <IonFabButton id={`details-modal-${id}`}>
               <IonIcon icon={create}></IonIcon>
             </IonFabButton>
-            <IonFabButton onClick={() => setIsDeletionModalOpen(true)}>
+            <IonFabButton id={`delete-modal-${id}`}>
               <IonIcon icon={trash}></IonIcon>
             </IonFabButton>
           </IonFabList>
         </IonFab>
       </div>
 
-      <IonModal
-        isOpen={isDeletionModalOpen}
-        onDidDismiss={() => setIsDeletionModalOpen(false)}
-      >
+      <IonModal trigger={`delete-modal-${id}`} ref={deleteModal}>
         <AthleteDeletionModal
-          onDeletionCancelled={() => setIsDeletionModalOpen(false)}
+          onDeletionCancelled={() => deleteModal.current?.dismiss()}
           onDeletion={() => {
             onAthleteDelete(id!);
-            setIsDeletionModalOpen(false);
+            deleteModal.current?.dismiss();
           }}
         />
       </IonModal>
 
-      <IonModal
-        isOpen={isAthleteCompleteInfoOpen}
-        onDidDismiss={() => setIsAthleteCompleteInfoOpen(false)}
-      >
+      <IonModal trigger={`complete-info-modal-${id}`} ref={completeInfoModal}>
         <AthleteCompleteInfoModal athleteId={id!} />
       </IonModal>
 
-      <IonModal
-        isOpen={isAthleteDetailsOpen}
-        onDidDismiss={() => setIsAthleteDetailsOpen(false)}
-      >
+      <IonModal trigger={`details-modal-${id}`} ref={detailsModal}>
         <AthleteDetailsModal
           athlete={athleteInfo}
-          onAthleteSubmit={(data) => {
+          onAthleteSubmit={(data: AthleteBasicsDetails) => {
             onAthleteEdit(data);
-            setIsAthleteDetailsOpen(false);
+            detailsModal.current?.dismiss();
           }}
         />
       </IonModal>
