@@ -2,7 +2,7 @@ import { Athlete, Metric, Prisma, prisma } from "@pertrack/database";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import metrics from "./metrics";
-import { authMiddleware } from "../../middlewares";
+import { authMiddleware } from "../middlewares";
 
 const athletes: Hono = new Hono();
 
@@ -29,7 +29,7 @@ athletes.get("", async (c) => {
     return c.json(athletes, 200);
   } catch (error) {
     throw new HTTPException(500, {
-      message: "Error getting athletes list",
+      message: "Error getting athletes list",cause: error
     });
   }
 });
@@ -46,7 +46,7 @@ athletes.get("/:id", async (c) => {
     return c.json(athlete, 200);
   } catch (error) {
     throw new HTTPException(500, {
-      message: "Error getting athlete",
+      message: "Error getting athlete", cause: error
     });
   }
 });
@@ -64,7 +64,7 @@ athletes.post("", authMiddleware(), async (c) => {
     return c.json({ id, athlete }, 201);
   } catch (error) {
     throw new HTTPException(500, {
-      message: "Error adding athlete",
+      message: "Error adding athlete", cause: error
     });
   }
 });
@@ -85,7 +85,7 @@ athletes.put("/:id", authMiddleware(), async (c) => {
     return c.json(id, 200);
   } catch (error) {
     throw new HTTPException(500, {
-      message: "Error editing athlete",
+      message: "Error editing athlete", cause: error
     });
   }
 });
@@ -100,7 +100,7 @@ athletes.delete("/:id", authMiddleware(), async (c) => {
     return c.body(null, 204);
   } catch (error) {
     throw new HTTPException(500, {
-      message: "Error deleting athlete",
+      message: "Error deleting athlete",cause: error
     });
   }
 });

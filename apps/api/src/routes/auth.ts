@@ -23,7 +23,7 @@ auth.get("/token", async (c) => {
     return c.text(token, 200);
   } catch (error) {
     throw new HTTPException(500, {
-      message: "Error getting JWT token",
+      message: "Error getting JWT token", cause: error
     });
   }
 });
