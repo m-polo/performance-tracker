@@ -67,8 +67,24 @@ npm run build
 
 ### Develop
 
-To develop all apps and packages, run the following command:
+To start in development all apps and packages, run the following command:
 
 ```
 npm run dev
+```
+
+### Test
+
+To test all apps and packages, run the following command:
+
+```
+npm run test
+```
+
+### Start
+
+To start all apps and packages, run the following command:
+
+```
+npm run start
 ```

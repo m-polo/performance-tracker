@@ -51,7 +51,7 @@ import { createContext, useEffect, useState } from "react";
 
 setupIonicReact({ toastDuration: 1500 });
 
-const queryClient = new QueryClient();
+const queryClient: QueryClient = new QueryClient();
 export const AuthContext = createContext<string>("");
 
 export default function App() {

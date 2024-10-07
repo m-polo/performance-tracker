@@ -38,7 +38,9 @@ metrics.post("", authMiddleware(), async (c) => {
       athleteId: Number(athleteId),
     });
 
-    return c.json({ id, metric }, 201);
+    const result: Metric = { ...metric, id };
+
+    return c.json(result, 201);
   } catch (error) {
     throw new HTTPException(500, {
       message: "Error adding metric to an athlete",

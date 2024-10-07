@@ -11,7 +11,7 @@ import {
 } from "@ionic/react";
 
 import { build, create, eye, trash } from "ionicons/icons";
-import { lazy, useRef } from "react";
+import { lazy, Suspense, useRef } from "react";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
 
 const AthleteCompleteInfoModal = lazy(
@@ -54,13 +54,22 @@ export default function AthleteCard({
             <IonIcon icon={build}></IonIcon>
           </IonFabButton>
           <IonFabList side="start">
-            <IonFabButton id={`complete-info-modal-${id}`}>
+            <IonFabButton
+              id={`complete-info-modal-${id}`}
+              data-testid="complete-info-modal-button"
+            >
               <IonIcon icon={eye}></IonIcon>
             </IonFabButton>
-            <IonFabButton id={`details-modal-${id}`}>
+            <IonFabButton
+              id={`details-modal-${id}`}
+              data-testid="edit-modal-button"
+            >
               <IonIcon icon={create}></IonIcon>
             </IonFabButton>
-            <IonFabButton id={`delete-modal-${id}`}>
+            <IonFabButton
+              id={`delete-modal-${id}`}
+              data-testid="delete-modal-button"
+            >
               <IonIcon icon={trash}></IonIcon>
             </IonFabButton>
           </IonFabList>
@@ -68,27 +77,33 @@ export default function AthleteCard({
       </div>
 
       <IonModal trigger={`delete-modal-${id}`} ref={deleteModal}>
-        <AthleteDeletionModal
-          onDeletionCancelled={() => deleteModal.current?.dismiss()}
-          onDeletion={() => {
-            onAthleteDelete(id!);
-            deleteModal.current?.dismiss();
-          }}
-        />
+        <Suspense>
+          <AthleteDeletionModal
+            onDeletionCancelled={() => deleteModal.current?.dismiss()}
+            onDeletion={() => {
+              onAthleteDelete(id!);
+              deleteModal.current?.dismiss();
+            }}
+          />
+        </Suspense>
       </IonModal>
 
       <IonModal trigger={`complete-info-modal-${id}`} ref={completeInfoModal}>
-        <AthleteCompleteInfoModal athleteId={id!} />
+        <Suspense>
+          <AthleteCompleteInfoModal athleteId={id!} />
+        </Suspense>
       </IonModal>
 
       <IonModal trigger={`details-modal-${id}`} ref={detailsModal}>
-        <AthleteDetailsModal
-          athlete={athleteInfo}
-          onAthleteSubmit={(data: AthleteBasicsDetails) => {
-            onAthleteEdit(data);
-            detailsModal.current?.dismiss();
-          }}
-        />
+        <Suspense>
+          <AthleteDetailsModal
+            athlete={athleteInfo}
+            onAthleteSubmit={(data: AthleteBasicsDetails) => {
+              onAthleteEdit(data);
+              detailsModal.current?.dismiss();
+            }}
+          />
+        </Suspense>
       </IonModal>
     </IonCard>
   );

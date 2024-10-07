@@ -38,7 +38,7 @@ athletes.post("", authMiddleware(), async (c) => {
   try {
     const athlete: Athlete = await c.req.json<Athlete>();
     const { id } = await athleteRepository.add(athlete);
-    return c.json({ id, athlete }, 201);
+    return c.json({ ...athlete, id }, 201);
   } catch (error) {
     throw new HTTPException(500, {
       message: "Error adding athlete",

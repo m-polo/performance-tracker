@@ -11,7 +11,7 @@ import { Metric, METRIC_TYPES, UNITS } from "../../shared/interfaces";
 import capitalizeText from "../../shared/utils";
 
 type MetricFormProps = {
-  onMetricCreate: (metric: Metric, e: any) => void;
+  onMetricCreate: (metric: Metric, e?: React.BaseSyntheticEvent) => void;
   formRef: any;
 };
 
@@ -35,6 +35,7 @@ export default function MetricForm({
               label="Metric type"
               labelPlacement="floating"
               fill="outline"
+              data-testid="metric-type-select"
               {...register("metricType", {
                 required: "Metric type must be added",
               })}
@@ -56,6 +57,7 @@ export default function MetricForm({
               labelPlacement="floating"
               fill="outline"
               type="number"
+              data-testid="value-input"
             />
             {errors?.value && <p role="alert">{errors.value.message}</p>}
           </IonCol>
@@ -65,10 +67,11 @@ export default function MetricForm({
               label="Unit"
               labelPlacement="floating"
               fill="outline"
+              data-testid="unit-select"
               {...register("unit", { required: "Unit must be added" })}
             >
               {Object.values(UNITS).map((unit, index) => (
-                <IonSelectOption value={unit}key={index}>
+                <IonSelectOption value={unit} key={index}>
                   {capitalizeText(unit)}
                 </IonSelectOption>
               ))}

@@ -7,7 +7,7 @@ import {
   IonSelectOption,
   useIonToast,
 } from "@ionic/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addCircle, checkmarkCircle, closeCircle } from "ionicons/icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../App";
@@ -34,7 +34,7 @@ export default function AthleteCompleteInfoModal({
   const [athleteInfo, setAthleteInfo] = useState<Athlete>();
   const [athleteMetrics, setAthleteMetrics] = useState<Metric[]>();
   const [metricTypeFilter, setMetricTypeFilter] = useState<METRIC_TYPES>();
-  const queryClient = useQueryClient();
+  const queryClient: QueryClient = useQueryClient();
   const token: string = useContext(AuthContext);
   const formRef = useRef<HTMLFormElement>();
 
@@ -76,7 +76,7 @@ export default function AthleteCompleteInfoModal({
   }, [filterMetricsQuery.data]);
 
   return (
-    <div className="ion-padding">
+    <div className="ion-padding" data-testid="complete-info-modal">
       <div>
         <h1>{athleteInfo?.name}</h1>
         <strong>{athleteInfo?.team}</strong>,{" "}
@@ -84,7 +84,7 @@ export default function AthleteCompleteInfoModal({
       </div>
 
       <div>
-        {athleteMetrics ? (
+        {athleteMetrics && athleteMetrics.length > 0 ? (
           <MetricsGrid metrics={athleteMetrics}>
             <IonRow>
               <IonCol>

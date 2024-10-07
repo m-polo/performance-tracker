@@ -23,7 +23,11 @@ auth.get("/token", async (c) => {
       exp: Math.floor(Date.now() / 1000) + 60 * 5, // Token expires in 5 minutes
     };
 
-    const token = await sign(payload, process.env.JWT_SECRET!, jwtAlgorithm);
+    const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      throw new Error("JWT_SECRET env variable not provided");
+    }
+    const token = await sign(payload, JWT_SECRET, jwtAlgorithm);
 
     return c.text(token, 200);
   } catch (error) {

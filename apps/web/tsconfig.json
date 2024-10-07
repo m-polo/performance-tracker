@@ -12,6 +12,7 @@
     "noEmit": true,
   },
   "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["/**/*.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "extends": "@pertrack/typescript-config/react-library.json",
 }

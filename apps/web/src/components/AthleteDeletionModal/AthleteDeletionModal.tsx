@@ -11,7 +11,7 @@ export default function AthleteDeletionModal({
   onDeletionCancelled,
 }: AthleteDeletionModalProps) {
   return (
-    <div className="ion-padding">
+    <div className="ion-padding" data-testid="delete-modal">
       <h3>Are you sure you want to remove this athlete?</h3>
       <div>
         <IonButton size="small" fill="clear" onClick={onDeletion}>

@@ -8,9 +8,9 @@ import {
   IonSearchbar,
   useIonToast,
 } from "@ionic/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { add, close } from "ionicons/icons";
-import { lazy, useContext, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../App";
 import AthleteCard from "../../components/AthleteCard/AthleteCard";
 import {
@@ -29,7 +29,7 @@ const AthleteDetailsModal = lazy(
 export default function AthletesDashboard() {
   const [present] = useIonToast();
   const token: string = useContext(AuthContext);
-  const queryClient = useQueryClient();
+  const queryClient: QueryClient = useQueryClient();
   const createModal = useRef<HTMLIonModalElement>(null);
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [searchText, setSearchText] = useState<string>("");
@@ -91,7 +91,7 @@ export default function AthletesDashboard() {
             placeholder="Search athlete or team"
           />
           <IonFab slot="fixed" vertical="top" horizontal="end">
-            <IonFabButton id="create-modal">
+            <IonFabButton id="create-modal" data-testid="create-modal-button">
               <IonIcon icon={add} />
             </IonFabButton>
           </IonFab>
@@ -107,12 +107,14 @@ export default function AthletesDashboard() {
         ))}
 
         <IonModal trigger="create-modal" ref={createModal}>
-          <AthleteDetailsModal
-            onAthleteSubmit={(athlete: AthleteBasicsDetails) => {
-              createAthleteMutation.mutate(athlete);
-              createModal.current?.dismiss();
-            }}
-          />
+          <Suspense>
+            <AthleteDetailsModal
+              onAthleteSubmit={(athlete: AthleteBasicsDetails) => {
+                createAthleteMutation.mutate(athlete);
+                createModal.current?.dismiss();
+              }}
+            />
+          </Suspense>
         </IonModal>
       </IonContent>
     </IonPage>

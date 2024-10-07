@@ -10,7 +10,7 @@ const authHeader = (token: string): AxiosRequestConfig => ({
 export function getFilteredMetricsFromAthlete(
   athleteId: number,
   metricTypeFilter: METRIC_TYPES | undefined
-) {
+): Promise<AxiosResponse> {
   return axios.get(
     `${baseUrl}/athletes/${athleteId}/metrics${metricTypeFilter ? `?metricType=${metricTypeFilter}` : ""}`
   );

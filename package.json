@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "test": "turbo run test",
     "dev": "turbo run dev",
     "start": "turbo run start",
     "clean": "turbo run clean",

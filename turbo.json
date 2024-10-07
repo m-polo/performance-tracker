@@ -12,6 +12,12 @@
     },
     "db:migrate:deploy": {},
     "db:seed": {},
+    "generate": {
+      "dependsOn": ["^generate"]
+    },
+    "test": {
+      "dependsOn": ["^test"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
@@ -20,9 +26,7 @@
       "cache": false,
       "persistent": true
     },
-    "generate": {
-      "dependsOn": ["^generate"]
-    },
+  
     "clean": {
       "cache": false
     }

@@ -21,7 +21,11 @@ export default function AthleteDetailsModal({
   });
 
   return (
-    <form onSubmit={handleSubmit(onAthleteSubmit)} className="ion-padding">
+    <form
+      onSubmit={handleSubmit(onAthleteSubmit)}
+      className="ion-padding"
+      data-testid="athlete-details-modal"
+    >
       <IonGrid>
         <IonRow className="ion-padding">
           <IonInput
