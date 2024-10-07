@@ -28,10 +28,7 @@ RUN addgroup --system --gid 1001 hono
 RUN adduser --system --uid 1001 hono
 USER hono
 
-ENV PORT=3000
-ENV JWT_SECRET=mysecretkey
-
 COPY --from=installer --chown=hono:hono /app .
 EXPOSE 3000
 
-CMD ["node", "apps/api/dist/index.js"]
+CMD npm run db:migrate:deploy && npm run db:seed && npm run start

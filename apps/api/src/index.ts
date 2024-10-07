@@ -7,7 +7,6 @@ import athletes from "./routes/athletes";
 import auth from "./routes/auth";
 
 const app = new Hono();
-const port: number = 3000;
 
 app.use(
   "*",
@@ -27,9 +26,6 @@ app.notFound((c) => {
   return c.text("Endpoint does not exist");
 });
 
-console.log(`Server is running on port ${port}`);
-
-serve({
-  fetch: app.fetch,
-  port,
+serve(app, (info) => {
+  console.log(`Listening on http://localhost:${info.port}`);
 });

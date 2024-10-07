@@ -27,8 +27,8 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 USER nodejs
 
-ENV VITE_BASE_URL=http://localhost:8100
-
 COPY --from=installer --chown=nodejs:nodejs /app .
 
-CMD ["node", "apps/web/dist/index.js"]
+EXPOSE 8000
+
+CMD ["npm", "run", "start"]

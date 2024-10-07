@@ -58,6 +58,7 @@ export default function App() {
   const [token, setToken] = useState<string>("");
   const userName: string = "Manuel Polo";
   const email: string = "manuelpolo@gmail.com";
+  const baseUrl: string = import.meta.env.VITE_BASE_URL;
 
   const { data } = useQuery<string>(
     {
@@ -65,7 +66,7 @@ export default function App() {
       queryFn: () =>
         axios
           .get(
-            `http://localhost:3000/auth/token?name=${userName}&email=${email}`
+            `${baseUrl}/auth/token?name=${userName}&email=${email}`
           )
           .then((res) => res.data),
     },
