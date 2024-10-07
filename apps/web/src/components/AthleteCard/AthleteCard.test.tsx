@@ -2,16 +2,10 @@ import { IonApp } from "@ionic/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, Mock, test, vi } from "vitest";
-import { Athlete } from "../../shared/interfaces";
+import { athlete } from "../../test-data";
 import AthleteCard from "./AthleteCard";
 
 const queryClient: QueryClient = new QueryClient();
-const athlete: Athlete = {
-  id: 1,
-  name: "name",
-  age: 1,
-  team: "team",
-};
 
 const onAthleteDelete: Mock = vi.fn();
 const onAthleteEdit: Mock = vi.fn();

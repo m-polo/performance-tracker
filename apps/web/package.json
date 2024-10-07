@@ -9,7 +9,7 @@
     "start": "vite",
     "clean": "rm -rf dist",
     "lint": "eslint \"src/**/*.ts*\"",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "dependencies": {
     "@ionic/react": "^8.0.0",

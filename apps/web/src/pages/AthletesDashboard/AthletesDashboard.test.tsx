@@ -3,25 +3,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
 import { describe, expect, test, vi } from "vitest";
-import { Athlete } from "../../shared/interfaces";
+import { athletes } from "../../test-data";
 import AthletesDashboard from "./AthletesDashboard";
 
 const queryClient: QueryClient = new QueryClient();
-
-const athletes: Athlete[] = [
-  {
-    id: 1,
-    name: "name",
-    age: 1,
-    team: "team",
-  },
-  {
-    id: 2,
-    name: "name2",
-    age: 2,
-    team: "team2",
-  },
-];
 
 const component: JSX.Element = (
   <QueryClientProvider client={queryClient}>

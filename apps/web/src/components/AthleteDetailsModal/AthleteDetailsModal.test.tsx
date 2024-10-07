@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, Mock, test, vi } from "vitest";
 import { Athlete } from "../../shared/interfaces";
+import { athlete } from "../../test-data";
 import AthleteDetailsModal from "./AthleteDetailsModal";
 
 const queryClient: QueryClient = new QueryClient();
@@ -36,13 +37,6 @@ describe("AthleteDetailsModal tests", () => {
   });
 
   test("should load athlete info in form and submit when athlete info has been passed", async () => {
-    const athlete: Athlete = {
-      id: 1,
-      name: "name",
-      age: 1,
-      team: "team",
-    };
-
     render(component(athlete));
 
     fireEvent.submit(screen.getByText("Save"));

@@ -3,34 +3,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
 import { describe, expect, test, vi } from "vitest";
-import { Athlete, Metric, METRIC_TYPES, UNITS } from "../../shared/interfaces";
 import AthleteCompleteInfoModal from "./AthleteCompleteInfoModal";
+import { athlete, metrics } from "../../test-data";
 
 const queryClient: QueryClient = new QueryClient();
-
-const metrics: Metric[] = [
-  {
-    id: 1,
-    unit: UNITS.KG,
-    value: 3,
-    metricType: METRIC_TYPES.HORIZONTAL_JUMP,
-  },
-];
-
-const athlete: Athlete = {
-  id: 1,
-  name: "name",
-  age: 1,
-  team: "team",
-  metrics,
-};
-
-const athleteId: number = 1;
 
 const component: JSX.Element = (
   <QueryClientProvider client={queryClient}>
     <IonApp>
-      <AthleteCompleteInfoModal athleteId={athleteId} />
+      <AthleteCompleteInfoModal athleteId={athlete.id!} />
     </IonApp>
   </QueryClientProvider>
 );
