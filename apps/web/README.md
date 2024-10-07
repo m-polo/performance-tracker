@@ -17,7 +17,7 @@ npm run dev
 - Open API in the browser to check status:
 
 ```
-open http://localhost:3000
+open http://localhost:8000
 ```
 
 ## Useful scripts
@@ -30,10 +30,11 @@ open http://localhost:3000
 
 ## Environment variables
 
-- `JWT_SECRET`: JWT secret token.
+- `VITE_BASE_URL`: Base URL of the API. Default: "http://localhost:3000"
 
 ## Dependencies
 
+- /apps/api
 - /package/database
 - /package/eslint-config
 - /package/typescript-config

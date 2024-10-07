@@ -9,11 +9,16 @@ import {
   useIonToast,
 } from "@ionic/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosRequestConfig } from "axios";
 import { add, close } from "ionicons/icons";
 import { lazy, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../App";
 import AthleteCard from "../../components/AthleteCard/AthleteCard";
+import {
+  addNewAthlete,
+  deleteAthlete,
+  editAthlete,
+  getAllAthletes,
+} from "../../services/athlete.service";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
 import { errorToast, successToast } from "../../shared/toasts";
 
@@ -29,25 +34,17 @@ export default function AthletesDashboard() {
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [searchText, setSearchText] = useState<string>("");
 
-  const baseUrl: string = import.meta.env.VITE_BASE_URL;
-  const authHeader: AxiosRequestConfig = {
-    headers: { Authorization: `Bearer ${token}` },
-  };
-
   const { data } = useQuery<Athlete[]>({
     queryKey: ["athleteList", searchText],
     queryFn: () =>
-      axios
-        .get(
-          `${baseUrl}/athletes${searchText ? `?searchText=${searchText}` : ""}`
-        )
+      getAllAthletes(searchText)
         .then((res) => res.data)
         .catch(() => present(errorToast("Error getting athletes"))),
   });
 
   const createAthleteMutation = useMutation({
     mutationFn: async (newAthlete: AthleteBasicsDetails) =>
-      await axios.post(`${baseUrl}/athletes`, newAthlete, authHeader),
+      addNewAthlete(newAthlete, token),
     onSuccess: () => {
       present(successToast("Athlete added correctly"));
       queryClient.invalidateQueries({ queryKey: ["athleteList"] });
@@ -57,7 +54,7 @@ export default function AthletesDashboard() {
 
   const deleteAthleteMutation = useMutation({
     mutationFn: async (athleteDeletedId: number) =>
-      await axios.delete(`${baseUrl}/athletes/${athleteDeletedId}`, authHeader),
+      deleteAthlete(athleteDeletedId, token),
     onSuccess: () => {
       present(successToast("Athlete deleted correctly"));
       queryClient.invalidateQueries({ queryKey: ["athleteList"] });
@@ -67,7 +64,7 @@ export default function AthletesDashboard() {
 
   const updateAthleteMutation = useMutation({
     mutationFn: async (athlete: AthleteBasicsDetails) =>
-      await axios.put(`${baseUrl}/athletes/${athlete.id}`, athlete, authHeader),
+      editAthlete(athlete, token),
     onSuccess: () => {
       present(successToast("Athlete edited correctly"));
       queryClient.invalidateQueries({ queryKey: ["athleteList"] });

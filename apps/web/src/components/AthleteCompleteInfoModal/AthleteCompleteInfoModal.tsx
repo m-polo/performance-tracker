@@ -8,15 +8,19 @@ import {
   useIonToast,
 } from "@ionic/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { addCircle, checkmarkCircle, closeCircle } from "ionicons/icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../App";
+import { getAthleteById } from "../../services/athlete.service";
+import {
+  addNewMetric,
+  getFilteredMetricsFromAthlete,
+} from "../../services/metric.service";
 import { Athlete, Metric, METRIC_TYPES } from "../../shared/interfaces";
 import { errorToast, successToast } from "../../shared/toasts";
+import capitalizeText from "../../shared/utils";
 import MetricForm from "../MetricForm/MetricForm";
 import MetricsGrid from "../MetricsGrid/MetricsGrid";
-import capitalizeText from "../../shared/utils";
 
 type AthleteCompleteInfoModalProps = {
   athleteId: number;
@@ -34,38 +38,27 @@ export default function AthleteCompleteInfoModal({
   const token: string = useContext(AuthContext);
   const formRef = useRef<HTMLFormElement>();
 
-  const baseUrl: string = import.meta.env.VITE_BASE_URL;
-
   const athleteQuery = useQuery<Athlete>({
     queryKey: ["athleteCompleteInfo", athleteId],
     queryFn: () =>
-      fetch(`${baseUrl}/athletes/${athleteId}`).then((res) =>
-        res
-          .json()
-          .catch(() => present(errorToast("Error getting athlete info")))
-      ),
+      getAthleteById(athleteId)
+        .then((res) => res.data)
+        .catch(() => present(errorToast("Error getting athlete info"))),
   });
 
   const filterMetricsQuery = useQuery<Metric[]>({
     queryKey: ["filterAthleteMetrics", athleteId, metricTypeFilter],
     queryFn: () =>
-      axios
-        .get(
-          `${baseUrl}/athletes/${athleteId}/metrics${metricTypeFilter ? `?metricType=${metricTypeFilter}` : ""}`
-        )
+      getFilteredMetricsFromAthlete(athleteId, metricTypeFilter)
         .then((res) => res.data)
         .catch(() => present(errorToast("Error filtering metrics"))),
   });
 
   const { mutate } = useMutation({
     mutationFn: async (newMetric: Metric) => {
-      return await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/athletes/${athleteId}/metrics`,
-        newMetric,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      addNewMetric(newMetric, athleteId, token);
     },
-    onSuccess: (res) => {
+    onSuccess: () => {
       present(successToast("Metric added correctly"));
       queryClient.invalidateQueries({ queryKey: ["athleteCompleteInfo"] });
       setShowForm(false);
