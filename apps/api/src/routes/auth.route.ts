@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { sign } from "hono/jwt";
 import "dotenv/config";
 
-const auth = new Hono();
+const auth: Hono = new Hono();
 const jwtAlgorithm = "HS256";
 
 type Payload = {

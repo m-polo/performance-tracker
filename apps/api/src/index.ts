@@ -3,10 +3,10 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { timeout } from "hono/timeout";
-import athletes from "./routes/athletes";
-import auth from "./routes/auth";
+import athletes from "./routes/athletes.route";
+import auth from "./routes/auth.route";
 
-const app = new Hono();
+const app: Hono = new Hono();
 
 app.use(
   "*",
