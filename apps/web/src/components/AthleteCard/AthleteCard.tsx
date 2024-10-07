@@ -13,6 +13,7 @@ import {
 import { build, create, eye, trash } from "ionicons/icons";
 import { lazy, Suspense, useRef } from "react";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
+import Loading from "../Loading/Loading";
 
 const AthleteCompleteInfoModal = lazy(
   () => import("../AthleteCompleteInfoModal/AthleteCompleteInfoModal")
@@ -77,7 +78,7 @@ export default function AthleteCard({
       </div>
 
       <IonModal trigger={`delete-modal-${id}`} ref={deleteModal}>
-        <Suspense>
+        <Suspense fallback={<Loading />}>
           <AthleteDeletionModal
             onDeletionCancelled={() => deleteModal.current?.dismiss()}
             onDeletion={() => {
@@ -89,13 +90,13 @@ export default function AthleteCard({
       </IonModal>
 
       <IonModal trigger={`complete-info-modal-${id}`} ref={completeInfoModal}>
-        <Suspense>
+        <Suspense fallback={<Loading />}>
           <AthleteCompleteInfoModal athleteId={id!} />
         </Suspense>
       </IonModal>
 
       <IonModal trigger={`details-modal-${id}`} ref={detailsModal}>
-        <Suspense>
+        <Suspense fallback={<Loading />}>
           <AthleteDetailsModal
             athlete={athleteInfo}
             onAthleteSubmit={(data: AthleteBasicsDetails) => {

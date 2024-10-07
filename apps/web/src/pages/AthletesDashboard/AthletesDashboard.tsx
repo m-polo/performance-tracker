@@ -8,7 +8,12 @@ import {
   IonSearchbar,
   useIonToast,
 } from "@ionic/react";
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { add, close } from "ionicons/icons";
 import { lazy, Suspense, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../App";
@@ -21,6 +26,7 @@ import {
 } from "../../services/athlete.service";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
 import { errorToast, successToast } from "../../shared/toasts";
+import Loading from "../../components/Loading/Loading";
 
 const AthleteDetailsModal = lazy(
   () => import("../../components/AthleteDetailsModal/AthleteDetailsModal")
@@ -34,7 +40,7 @@ export default function AthletesDashboard() {
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [searchText, setSearchText] = useState<string>("");
 
-  const { data } = useQuery<Athlete[]>({
+  const { data, isLoading } = useQuery<Athlete[]>({
     queryKey: ["athleteList", searchText],
     queryFn: () =>
       getAllAthletes(searchText)
@@ -97,6 +103,8 @@ export default function AthletesDashboard() {
           </IonFab>
         </div>
 
+        {isLoading ? <Loading /> : null}
+
         {athletes.map((athlete) => (
           <AthleteCard
             athleteInfo={athlete}
@@ -107,7 +115,7 @@ export default function AthletesDashboard() {
         ))}
 
         <IonModal trigger="create-modal" ref={createModal}>
-          <Suspense>
+          <Suspense fallback={<Loading />}>
             <AthleteDetailsModal
               onAthleteSubmit={(athlete: AthleteBasicsDetails) => {
                 createAthleteMutation.mutate(athlete);
