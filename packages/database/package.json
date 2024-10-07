@@ -6,13 +6,12 @@
   },
   "license": "ISC",
   "scripts": {
+    "build": "tsc && vite build",
+    "lint": "eslint",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
-    "db:push": "prisma db push",
     "db:seed": "tsx src/seed.ts",
-    "format": "prisma format",
-    "generate": "prisma generate",
-    "lint": "eslint"
+    "generate": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0"

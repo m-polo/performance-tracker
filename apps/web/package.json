@@ -4,9 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "start": "vite",
-    "dev": "tsc && vite",
     "build": "tsc && vite build",
+    "dev": "tsc && vite",
+    "start": "vite",
+    "clean": "rm -rf dist",
     "lint": "eslint \"src/**/*.ts*\""
   },
   "dependencies": {
