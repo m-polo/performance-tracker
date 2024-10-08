@@ -15,3 +15,14 @@ jobs:
       
       - name: Run docker-compose
         run: docker compose up --build
+
+      - name: "Install npm@latest"
+        run: npm i -g npm@latest
+
+      - uses: bahmutov/npm-install@v1
+
+      - name: "Execute tests"
+        run: npm run test
+
+      - name: Run docker-compose
+        run: docker compose down --volumes
