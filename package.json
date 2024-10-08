@@ -21,7 +21,7 @@
     "db:seed": "turbo run db:seed",
     "generate": "turbo run generate",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "env-files": "turbo run env-files"
+    "env-files": "cp .env.example .env && turbo run env-files"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0"
