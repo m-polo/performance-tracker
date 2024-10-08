@@ -9,7 +9,8 @@
     "start": "vite",
     "clean": "rm -rf dist",
     "lint": "eslint \"src/**/*.ts*\"",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepare": "panda codegen"
   },
   "dependencies": {
     "@ionic/react": "^8.0.0",
@@ -26,6 +27,7 @@
     "react-router-dom": "^5.3.4"
   },
   "devDependencies": {
+    "@pandacss/dev": "^0.46.1",
     "@pertrack/eslint-config": "*",
     "@pertrack/typescript-config": "*",
     "@testing-library/dom": ">=7.21.4",

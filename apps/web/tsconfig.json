@@ -11,7 +11,7 @@
     "resolveJsonModule": true,
     "noEmit": true,
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "styled-system"],
   "exclude": ["/**/*.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "extends": "@pertrack/typescript-config/react-library.json",
