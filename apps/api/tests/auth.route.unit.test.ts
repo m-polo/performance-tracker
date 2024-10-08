@@ -1,4 +1,3 @@
-import assert from "assert";
 import app from "../src/app";
 
 describe("Auth routes tests", () => {
@@ -6,8 +5,6 @@ describe("Auth routes tests", () => {
   const name: string = "name";
 
   test("Get token returns a string", async () => {
-    assert(2);
-
     const res = await app.request(`auth/token?name=${name}&email=${email}`, {
       method: "GET",
     });
@@ -17,8 +14,6 @@ describe("Auth routes tests", () => {
   });
 
   test("Get token returns an error when there is secret", async () => {
-    assert(2);
-
     process.env = {};
 
     const res = await app.request(`auth/token?name=${name}&email=${email}`, {

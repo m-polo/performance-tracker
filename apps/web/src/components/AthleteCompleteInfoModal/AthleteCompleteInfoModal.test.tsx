@@ -2,13 +2,14 @@ import { IonApp } from "@ionic/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
+import React from "react";
 import { describe, expect, test, vi } from "vitest";
-import AthleteCompleteInfoModal from "./AthleteCompleteInfoModal";
 import { athlete, metrics } from "../../test-data";
+import AthleteCompleteInfoModal from "./AthleteCompleteInfoModal";
 
 const queryClient: QueryClient = new QueryClient();
 
-const component: JSX.Element = (
+const component: React.JSX.Element = (
   <QueryClientProvider client={queryClient}>
     <IonApp>
       <AthleteCompleteInfoModal athleteId={athlete.id!} />

@@ -6,7 +6,8 @@
     "start": "tsx src/index.ts",
     "clean": "rm -rf dist",
     "lint": "eslint \"src/**/*.ts*\"",
-    "test": "jest"
+    "test": "jest unit",
+    "int-test": "jest integration"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.1",
@@ -19,6 +20,7 @@
     "@pertrack/typescript-config": "*",
     "@types/jest": "^29.5.13",
     "@types/node": "^20.11.17",
+    "axios": "^1.7.7",
     "eslint": "^9.11.1",
     "jest": "^29.7.0",
     "ts-jest": "^29.2.5",

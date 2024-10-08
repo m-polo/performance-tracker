@@ -18,6 +18,9 @@
     "test": {
       "dependsOn": ["^test"]
     },
+    "int-test": {
+      "dependsOn": ["^int-test"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

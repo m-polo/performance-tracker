@@ -22,7 +22,7 @@ app.route("/auth", auth);
 app.route("/athletes", athletes);
 
 app.notFound((c) => {
-  return c.text("Endpoint does not exist");
+  return c.text("Endpoint does not exist", 500);
 });
 
 export default app;

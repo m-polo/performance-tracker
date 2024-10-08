@@ -1,5 +1,4 @@
 import { prisma } from "@pertrack/database";
-import assert from "assert";
 import app from "../src/app";
 import { athlete1, athletes } from "./test-data";
 
@@ -14,8 +13,6 @@ describe("Athletes routes tests", () => {
     jest.spyOn(prisma.athlete, "delete").mockResolvedValueOnce(athlete1);
 
     test("Get all athletes", async () => {
-      assert(2);
-
       const res = await app.request("/athletes", {
         method: "GET",
       });
@@ -25,8 +22,6 @@ describe("Athletes routes tests", () => {
 
     test("Get specific athlete", async () => {
       const id: number = 1;
-
-      assert(2);
 
       const res = await app.request(`/athletes/${id}`, {
         method: "GET",
@@ -48,8 +43,6 @@ describe("Athletes routes tests", () => {
       });
 
       test("Add athlete is done correctly", async () => {
-        assert(2);
-
         const res = await app.request("/athletes", {
           method: "POST",
           body: JSON.stringify({ ...athlete1, id: undefined }),
@@ -61,8 +54,6 @@ describe("Athletes routes tests", () => {
       });
 
       test("Edit athlete is done correctly", async () => {
-        assert(2);
-
         const id: number = 1;
         const res = await app.request(`/athletes/${id}`, {
           method: "PUT",
@@ -75,8 +66,6 @@ describe("Athletes routes tests", () => {
       });
 
       test("Delete athlete is done correctly", async () => {
-        assert(2);
-
         const id: number = 1;
         const res = await app.request(`/athletes/${id}`, {
           method: "DELETE",
@@ -91,8 +80,6 @@ describe("Athletes routes tests", () => {
 
     describe("When user not authenticated", () => {
       test("Add athlete returns an error", async () => {
-        assert(1);
-
         const res = await app.request("/athletes", {
           method: "POST",
           body: JSON.stringify(athlete1),
@@ -102,8 +89,6 @@ describe("Athletes routes tests", () => {
       });
 
       test("Edit athlete returns an error", async () => {
-        assert(1);
-
         const id: number = 1;
         const res = await app.request(`/athletes/${id}`, {
           method: "PUT",
@@ -114,8 +99,6 @@ describe("Athletes routes tests", () => {
       });
 
       test("Delete athlete returns an error", async () => {
-        assert(1);
-
         const id: number = 1;
         const res = await app.request(`/athletes/${id}`, {
           method: "DELETE",
@@ -147,8 +130,6 @@ describe("Athletes routes tests", () => {
     });
 
     test("Add athlete returns an error", async () => {
-      assert(2);
-
       const res = await app.request("/athletes", {
         method: "POST",
         body: JSON.stringify(athlete1),
@@ -160,8 +141,6 @@ describe("Athletes routes tests", () => {
     });
 
     test("Edit athlete returns an error", async () => {
-      assert(2);
-
       const id: number = 1;
       const res = await app.request(`/athletes/${id}`, {
         method: "PUT",
@@ -174,8 +153,6 @@ describe("Athletes routes tests", () => {
     });
 
     test("Delete athlete returns an error", async () => {
-      assert(2);
-
       const id: number = 1;
       const res = await app.request(`/athletes/${id}`, {
         method: "DELETE",

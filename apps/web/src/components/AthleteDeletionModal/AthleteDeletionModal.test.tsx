@@ -1,6 +1,7 @@
 import { IonApp } from "@ionic/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
+import React from "react";
 import { beforeEach, describe, expect, Mock, test, vi } from "vitest";
 import AthleteDeletionModal from "./AthleteDeletionModal";
 
@@ -9,7 +10,7 @@ const queryClient: QueryClient = new QueryClient();
 const onDeletion: Mock = vi.fn();
 const onDeletionCancelled: Mock = vi.fn();
 
-const component: JSX.Element  = (
+const component: React.JSX.Element = (
   <QueryClientProvider client={queryClient}>
     <IonApp>
       <AthleteDeletionModal

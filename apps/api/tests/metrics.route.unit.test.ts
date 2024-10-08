@@ -1,5 +1,4 @@
 import { Metric, prisma } from "@pertrack/database";
-import assert from "assert";
 import app from "../src/app";
 import { metric1, metrics } from "./test-data";
 
@@ -11,8 +10,6 @@ describe("Metrics routes tests", () => {
     jest.spyOn(prisma.metric, "create").mockResolvedValueOnce(metric1);
 
     test("Get all metrics returns an array", async () => {
-      assert(2);
-
       const res = await app.request(`athletes/${athleteId}/metrics`, {
         method: "GET",
       });
@@ -33,8 +30,6 @@ describe("Metrics routes tests", () => {
       });
 
       test("Add metric is done correctly", async () => {
-        assert(2);
-
         const res = await app.request(`athletes/${athleteId}/metrics`, {
           method: "POST",
           body: JSON.stringify({ ...metric1, id: undefined }),
@@ -53,8 +48,6 @@ describe("Metrics routes tests", () => {
 
     describe("When user not authenticated", () => {
       test("Add metric returns an error", async () => {
-        assert(1);
-
         const res = await app.request(`athletes/${athleteId}/metrics`, {
           method: "POST",
           body: JSON.stringify(metric1),
@@ -70,8 +63,6 @@ describe("Metrics routes tests", () => {
     jest.spyOn(prisma.metric, "create").mockRejectedValue(new Error());
 
     test("Get all metric returns an error", async () => {
-      assert(2);
-
       const res = await app.request(`athletes/${athleteId}/metrics`, {
         method: "GET",
       });
@@ -81,8 +72,6 @@ describe("Metrics routes tests", () => {
     });
 
     test("Add metric returns an error", async () => {
-      assert(2);
-
       const resToken = await app.request("/auth/token", {
         method: "GET",
       });

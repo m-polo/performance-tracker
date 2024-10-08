@@ -1,4 +1,4 @@
-name: "e2e tests"
+name: "Integration tests"
 
 on:
   push:
@@ -24,10 +24,14 @@ jobs:
       - name: "Install npm@latest"
         run: npm i -g npm@latest
 
-      - uses: bahmutov/npm-install@v1
+      - name: "Install dependencies"
+        uses: bahmutov/npm-install@v1
 
-      - name: "Execute tests"
-        run: npm run test
+      - name: "Create api .env file"
+        run: cp -n ./apps/api/.env.example ./apps/api/.env
+
+      - name: "Execute integration tests"
+        run: npm run int-test
 
       - name: Run docker-compose
         run: docker compose down --volumes
