@@ -21,7 +21,7 @@ COPY --from=builder /app/out/full/ .
 RUN npm install turbo --global
 RUN turbo build --filter=web
 
-COPY /apps/api/.env.example .env
+COPY /apps/web/.env.example /apps/web/.env
 
 FROM base AS runner
 WORKDIR /app
