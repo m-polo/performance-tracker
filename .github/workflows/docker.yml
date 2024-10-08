@@ -8,10 +8,14 @@ jobs:
   build:
     name: Build dockerized application
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Run docker-compose
-        run: docker compose up
+        uses: adambirds/docker-compose-action@v1.5.0
+        with:
+          compose-file: "./docker-compose.yml"
+          up-flags: "--build"
+          down-flags: "--volumes"
