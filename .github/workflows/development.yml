@@ -31,9 +31,8 @@ jobs:
 
       - name: "Lint api code"
         run: npm run lint
-
-      - name: "Add env variables"
-        run: export JWT_SECRET=$JWT_SECRET
           
       - name: "Run tests"
         run: npm run test
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
