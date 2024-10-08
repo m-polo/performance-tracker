@@ -37,7 +37,7 @@ services:
     depends_on:
       postgres:         
         condition: service_started
-    restart: always
+    container_name: prisma
     build: 
       context: .
       dockerfile: ./Dockerfile

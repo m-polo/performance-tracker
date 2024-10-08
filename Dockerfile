@@ -5,6 +5,6 @@ RUN npm install turbo --global
 COPY . .
 RUN npm install
 
-COPY .env.example /app/.env
+COPY ./packages/database/.env.example /app/packages/database/.env
 
 CMD npm run db:migrate:deploy && npm run db:seed
