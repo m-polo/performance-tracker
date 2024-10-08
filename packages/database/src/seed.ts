@@ -1,12 +1,5 @@
-import {
-  Athlete,
-  Metric,
-  MetricTypes,
-  PrismaClient,
-  Units,
-} from "@prisma/client";
-
-const prisma: PrismaClient = new PrismaClient();
+import { Athlete, Metric, MetricTypes, Units } from "@prisma/client";
+import { prisma } from "./client";
 
 type AthleteWithoutId = Omit<Athlete, "id">;
 type MetricWithoutId = Omit<Metric, "id">;
