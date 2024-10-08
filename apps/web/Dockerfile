@@ -18,10 +18,9 @@ COPY --from=builder /app/out/json/ .
 RUN npm install
 
 COPY --from=builder /app/out/full/ .
+RUN cp -n ./apps/web/.env.example ./apps/web/.env
 RUN npm install turbo --global
 RUN turbo build --filter=web
-
-RUN cp -n ./apps/web/.env.example ./apps/web/.env
 
 FROM base AS runner
 WORKDIR /app

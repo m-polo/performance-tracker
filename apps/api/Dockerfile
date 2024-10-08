@@ -18,12 +18,12 @@ COPY --from=builder /app/out/json/ .
 RUN npm install
 
 COPY --from=builder /app/out/full/ .
+RUN cp -n ./packages/database/.env.example ./packages/database/.env
+RUN cp -n ./apps/api/.env.example ./apps/api/.env
+
 RUN npm install turbo --global
 RUN npm run generate
 RUN turbo build --filter=api
-
-RUN cp -n ./packages/database/.env.example ./packages/database/.env
-RUN cp -n ./apps/api/.env.example ./apps/api/.env
 
 FROM base AS runner
 WORKDIR /app
