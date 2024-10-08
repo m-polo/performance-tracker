@@ -75,10 +75,11 @@ npm run dev
 
 ### Test
 
-To test all apps and packages, run the following command:
+To run unit and integration tests in all apps and packages, run the following command:
 
 ```
 npm run test
+npm run int-test
 ```
 
 ### Start

@@ -27,6 +27,8 @@ open http://localhost:3000
 - `start`:  To start the application
 - `clean`: Remove dist folder
 - `lint`: Use linter
+- `test`: Run unit tests
+- `int-text`: Run integration tests
 
 ## Environment variables
 
