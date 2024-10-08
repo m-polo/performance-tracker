@@ -4,10 +4,6 @@
   "exports": {
     ".": "./src/client.ts"
   },
-  "prisma": {
-    "schema": "prisma/schema.prisma",
-    "seed": "tsx src/seed.ts"
-  },
   "license": "ISC",
   "scripts": {
     "build": "tsc --noEmit",
@@ -15,7 +11,7 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:reset": "prisma migrate reset",
-    "db:seed": "tsx src/seed.ts",
+    "db:seed": "tsx src/seed.ts", 
     "generate": "prisma generate",
     "env-files": "cp .env.example .env"
   },
