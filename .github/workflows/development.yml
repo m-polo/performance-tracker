@@ -32,8 +32,8 @@ jobs:
       - name: "Lint api code"
         run: npm run lint
 
-      - name: "Test"
-        run: echo ${{ secrets.JWT_SECRET }}
+      - name: "Create api .env file"
+        run: cp -n ./apps/api/.env.example ./apps/api/.env
           
       - name: "Run tests"
         run: npm run test
