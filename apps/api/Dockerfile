@@ -32,4 +32,4 @@ USER hono
 COPY --from=installer --chown=hono:hono /app .
 EXPOSE 3000
 
-CMD npm run db:migrate:deploy && npm run start
+CMD npm run start
