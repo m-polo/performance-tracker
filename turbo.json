@@ -18,6 +18,9 @@
     "test": {
       "dependsOn": ["^test"]
     },
+    "env-files": {
+      "dependsOn": ["^env-files"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

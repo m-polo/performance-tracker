@@ -20,11 +20,8 @@ RUN npm install
 COPY --from=builder /app/out/full/ .
 RUN npm install turbo --global
 RUN npm run generate
+RUN npm run env-files
 RUN turbo build --filter=api
-
-COPY /apps/api/.env.example /apps/api/.env
-COPY /packages/database/.env.example /packages/database/.env
-
 
 FROM base AS runner
 WORKDIR /app

@@ -6,7 +6,8 @@
     "start": "tsx src/index.ts",
     "clean": "rm -rf dist",
     "lint": "eslint \"src/**/*.ts*\"",
-    "test": "jest"
+    "test": "jest",
+    "env-files": "cp .env.example .env"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.1",
