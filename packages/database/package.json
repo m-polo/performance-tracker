@@ -4,10 +4,6 @@
   "exports": {
     ".": "./src/client.ts"
   },
-  "prisma": {
-    "schema": "prisma/schema.prisma",
-    "seed": "tsx src/seed.ts"
-  },
   "license": "ISC",
   "scripts": {
     "build": "tsc --noEmit",
