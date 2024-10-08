@@ -33,7 +33,7 @@ jobs:
         run: npm run lint
 
       - name: "Add env variables"
-        run: set JWT_SECRET=$JWT_SECRET
+        run: export JWT_SECRET=$JWT_SECRET
           
       - name: "Run tests"
         run: npm run test
