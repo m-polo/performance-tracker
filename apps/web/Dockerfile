@@ -21,6 +21,8 @@ COPY --from=builder /app/out/full/ .
 RUN npm install turbo --global
 RUN turbo build --filter=web
 
+COPY /apps/api/.env.example .env
+
 FROM base AS runner
 WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs

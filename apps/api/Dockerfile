@@ -22,6 +22,10 @@ RUN npm install turbo --global
 RUN npm run generate
 RUN turbo build --filter=api
 
+COPY /apps/api/.env.example .env
+COPY /packages/database/.env.example .env
+
+
 FROM base AS runner
 WORKDIR /app
 RUN addgroup --system --gid 1001 hono
