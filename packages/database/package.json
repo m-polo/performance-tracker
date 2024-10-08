@@ -13,7 +13,7 @@
     "db:migrate:reset": "prisma migrate reset",
     "db:seed": "tsx src/seed.ts", 
     "generate": "prisma generate",
-    "env-files": "cp .env.example .env"
+    "env-files": "cp ./.env.example ./.env"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0"

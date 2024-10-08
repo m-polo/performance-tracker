@@ -1,25 +1,25 @@
 services:
-  # web:
-  #   container_name: web
-  #   build:
-  #     context: .
-  #     dockerfile: ./apps/web/Dockerfile
-  #   restart: always
-  #   ports:
-  #     - 8000:8000
-  # api:
-  #   depends_on:
-  #     postgres:         
-  #       condition: service_started
-  #   container_name: api
-  #   build:
-  #     context: .
-  #     dockerfile: ./apps/api/Dockerfile
-  #   restart: always
-  #   networks:
-  #     - backend
-  #   ports:
-  #     - 3000:3000
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+    restart: always
+    ports:
+      - 8000:8000
+  api:
+    depends_on:
+      postgres:         
+        condition: service_started
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    restart: always
+    networks:
+      - backend
+    ports:
+      - 3000:3000
   postgres:
     image: postgres:latest
     restart: always
@@ -33,16 +33,6 @@ services:
       POSTGRES_USER: tracker
       POSTGRES_PASSWORD: tracker
       POSTGRES_DB: performance_tracker
-  prisma:
-    depends_on:
-      postgres:         
-        condition: service_started
-    container_name: prisma
-    build: 
-      context: .
-      dockerfile: ./Dockerfile
-    networks:
-      - backend
 
 volumes:
   postgres-data:

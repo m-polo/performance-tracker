@@ -20,8 +20,10 @@ RUN npm install
 COPY --from=builder /app/out/full/ .
 RUN npm install turbo --global
 RUN npm run generate
-RUN npm run env-files
 RUN turbo build --filter=api
+
+RUN cp -n ./packages/database/.env.example ./packages/database/.env
+RUN cp -n ./apps/api/.env.example ./apps/api/.env
 
 FROM base AS runner
 WORKDIR /app
@@ -32,4 +34,4 @@ USER hono
 COPY --from=installer --chown=hono:hono /app .
 EXPOSE 3000
 
-CMD npm run start
+CMD npm run db:migrate:deploy && npm run db:seed && npm run start
