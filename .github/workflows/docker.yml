@@ -6,12 +6,12 @@ on:
 
 jobs:
   build:
+    name: Build dockerized application
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
 
       - name: Run docker-compose
-        uses: hoverkraft-tech/compose-action@v2.0.1
-        with:
-          compose-file: "docker-compose.yml"
+        uses: hoverkraft-tech/compose-action@v2.0.2
