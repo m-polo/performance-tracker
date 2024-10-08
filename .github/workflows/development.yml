@@ -1,0 +1,51 @@
+name: Development
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+  workflow_call:
+
+jobs:
+  test-lint:
+    name: Test&Lint application
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "Setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "Install npm@latest"
+        run: npm i -g npm@latest
+
+      - name: "Install api dependencies"
+      - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: apps/api
+
+      - name: "Install webdependencies"
+      - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: apps/web
+
+      - name: "Lint api code"
+        run: npm run lint
+        working-directory: apps/api
+      - name: "Run web lint"
+        run: npm run lint
+        working-directory: apps/web
+          
+      - name: "Run api tests"
+        run: npm run test
+        working-directory: apps/api
+      - name: "Run web tests"
+        run: npm run test
+        working-directory: apps/web
