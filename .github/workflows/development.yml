@@ -31,5 +31,5 @@ jobs:
       - name: "Lint api code"
         run: npm run lint
           
-      - name: "Run api tests"
+      - name: "Run tests"
         run: npm run test
