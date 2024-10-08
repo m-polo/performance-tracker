@@ -1,4 +1,4 @@
-name: "Docker Compose"
+name: "e2e tests"
 
 on:
   push:
@@ -6,15 +6,20 @@ on:
 
 jobs:
   build:
-    name: Build dockerized application
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       
       - name: Run docker-compose
         run: docker compose up -d --build
+      
+      - name: "Setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: "Install npm@latest"
         run: npm i -g npm@latest
@@ -24,29 +29,5 @@ jobs:
       - name: "Execute tests"
         run: npm run test
 
-      - name: Run docker-compose
-        run: docker compose down --volumes
-
-  test:
-    name: Run tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: "Install npm@latest"
-        run: npm i -g npm@latest
-
-      - uses: bahmutov/npm-install@v1
-
-      - name: "Execute tests"
-        run: npm run test
-
-      - name: Run docker-compose
-        run: docker compose down --volumes
-
-  close:
-    name: Stop container
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
       - name: Run docker-compose
         run: docker compose down --volumes
