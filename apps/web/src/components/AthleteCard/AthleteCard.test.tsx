@@ -28,8 +28,8 @@ describe("AthleteCard tests", () => {
     render(component);
 
     await waitFor(() => {
-      expect(screen.getByText("name")).toBeInTheDocument();
-      expect(screen.getByText("team")).toBeInTheDocument();
+      expect(screen.getByText(athlete.name)).toBeInTheDocument();
+      expect(screen.getByText(`${athlete.team}, ${athlete.age} years`)).toBeInTheDocument();
     });
   });
 
