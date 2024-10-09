@@ -1,7 +1,6 @@
 import {
+  IonButton,
   IonContent,
-  IonFab,
-  IonFabButton,
   IonIcon,
   IonModal,
   IonPage,
@@ -16,8 +15,10 @@ import {
 } from "@tanstack/react-query";
 import { add, close } from "ionicons/icons";
 import { lazy, Suspense, useContext, useEffect, useRef, useState } from "react";
+import { css } from "../../../styled-system/css";
 import { AuthContext } from "../../App";
 import AthleteCard from "../../components/AthleteCard/AthleteCard";
+import Loading from "../../components/Loading/Loading";
 import {
   addNewAthlete,
   deleteAthlete,
@@ -26,7 +27,7 @@ import {
 } from "../../services/athlete.service";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
 import { errorToast, successToast } from "../../shared/toasts";
-import Loading from "../../components/Loading/Loading";
+import { groupItemsInPairs } from "../../shared/utils";
 
 const AthleteDetailsModal = lazy(
   () => import("../../components/AthleteDetailsModal/AthleteDetailsModal")
@@ -87,8 +88,14 @@ export default function AthletesDashboard() {
   return (
     <IonPage>
       <IonContent className="ion-padding">
-        <div>
+        <div
+          className={css({
+            display: "flex",
+            flexDirection: "row",
+          })}
+        >
           <IonSearchbar
+            className={css({ flex: "80" })}
             debounce={1000}
             onIonInput={(e) => setSearchText(e.target.value!)}
             showClearButton="never"
@@ -96,23 +103,51 @@ export default function AthletesDashboard() {
             cancelButtonIcon={close}
             placeholder="Search athlete or team"
           />
-          <IonFab slot="fixed" vertical="top" horizontal="end">
-            <IonFabButton id="create-modal" data-testid="create-modal-button">
-              <IonIcon icon={add} />
-            </IonFabButton>
-          </IonFab>
+          <IonButton
+            className={css({
+              ml: "4",
+              mr: "4",
+              height: "5",
+              alignSelf: "center",
+            })}
+            id="create-modal"
+            data-testid="create-modal-button"
+            shape="round"
+          >
+            <IonIcon slot="icon-only" icon={add} />
+          </IonButton>
         </div>
 
         {isLoading ? <Loading /> : null}
 
-        {athletes.map((athlete) => (
-          <AthleteCard
-            athleteInfo={athlete}
-            key={athlete.id}
-            onAthleteDelete={(id) => deleteAthleteMutation.mutate(id)}
-            onAthleteEdit={(athlete) => updateAthleteMutation.mutate(athlete)}
-          />
-        ))}
+        {groupItemsInPairs(athletes).map(
+          (athletePair: [Athlete, Athlete | null]) => (
+            <div className={css({ display: "flex", flexDirection: "row" })}>
+              <div className={css({ flex: "50" })}>
+                <AthleteCard
+                  athleteInfo={athletePair[0]}
+                  key={athletePair[0].id}
+                  onAthleteDelete={(id) => deleteAthleteMutation.mutate(id)}
+                  onAthleteEdit={(athlete) =>
+                    updateAthleteMutation.mutate(athlete)
+                  }
+                />
+              </div>
+              <div className={css({ flex: "50" })}>
+                {athletePair[1] ? (
+                  <AthleteCard
+                    athleteInfo={athletePair[1]}
+                    key={athletePair[1].id}
+                    onAthleteDelete={(id) => deleteAthleteMutation.mutate(id)}
+                    onAthleteEdit={(athlete) =>
+                      updateAthleteMutation.mutate(athlete)
+                    }
+                  />
+                ) : null}
+              </div>
+            </div>
+          )
+        )}
 
         <IonModal trigger="create-modal" ref={createModal}>
           <Suspense fallback={<Loading />}>

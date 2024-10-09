@@ -28,6 +28,7 @@ open http://localhost:8000
 - `clean`: Remove dist folder
 - `lint`: Use linter
 - `test`: Run unit tests
+- `prepare`: CSS generation
 
 ## Environment variables
 

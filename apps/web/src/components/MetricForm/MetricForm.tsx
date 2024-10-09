@@ -9,11 +9,19 @@ import {
 import { useForm } from "react-hook-form";
 import { Metric, METRIC_TYPES, UNITS } from "../../shared/interfaces";
 import capitalizeText from "../../shared/utils";
+import { css } from "../../../styled-system/css";
 
 type MetricFormProps = {
   onMetricCreate: (metric: Metric, e?: React.BaseSyntheticEvent) => void;
   formRef: any;
 };
+
+const errorClass = css({
+  p: "1",
+  color: "red",
+  fontStyle: "italic",
+  fontSize: "12",
+});
 
 export default function MetricForm({
   onMetricCreate,
@@ -28,7 +36,7 @@ export default function MetricForm({
   return (
     <IonGrid>
       <form ref={formRef} onSubmit={handleSubmit(onMetricCreate)}>
-        <IonRow>
+        <IonRow className={css({ mt: 2 })}>
           <IonCol>
             <IonSelect
               interface="popover"
@@ -47,10 +55,10 @@ export default function MetricForm({
               ))}
             </IonSelect>
             {errors?.metricType && (
-              <p role="alert">{errors.metricType.message}</p>
+              <p className={errorClass}>{errors.metricType.message}</p>
             )}
           </IonCol>
-          <IonCol>
+          <IonCol className={css({ mr: "1", ml: "1" })}>
             <IonInput
               {...register("value", { required: "Value must be added" })}
               label="Value"
@@ -59,7 +67,9 @@ export default function MetricForm({
               type="number"
               data-testid="value-input"
             />
-            {errors?.value && <p role="alert">{errors.value.message}</p>}
+            {errors?.value && (
+              <p className={errorClass}>{errors.value.message}</p>
+            )}
           </IonCol>
           <IonCol>
             <IonSelect
@@ -76,7 +86,9 @@ export default function MetricForm({
                 </IonSelectOption>
               ))}
             </IonSelect>
-            {errors?.unit && <p role="alert">{errors.unit.message}</p>}
+            {errors?.unit && (
+              <p className={errorClass}>{errors.unit.message}</p>
+            )}
           </IonCol>
         </IonRow>
       </form>

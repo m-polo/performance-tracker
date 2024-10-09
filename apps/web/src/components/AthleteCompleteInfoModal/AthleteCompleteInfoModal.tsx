@@ -7,7 +7,12 @@ import {
   IonSelectOption,
   useIonToast,
 } from "@ionic/react";
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { addCircle, checkmarkCircle, closeCircle } from "ionicons/icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../App";
@@ -21,6 +26,8 @@ import { errorToast, successToast } from "../../shared/toasts";
 import capitalizeText from "../../shared/utils";
 import MetricForm from "../MetricForm/MetricForm";
 import MetricsGrid from "../MetricsGrid/MetricsGrid";
+import { css } from "../../../styled-system/css";
+import Loading from "../Loading/Loading";
 
 type AthleteCompleteInfoModalProps = {
   athleteId: number;
@@ -75,39 +82,49 @@ export default function AthleteCompleteInfoModal({
     setAthleteMetrics(filterMetricsQuery?.data);
   }, [filterMetricsQuery.data]);
 
+  if(athleteQuery.isLoading ){
+    return <Loading />
+  }
+
   return (
-    <div className="ion-padding" data-testid="complete-info-modal">
+    <div className={css({ p: "10" })} data-testid="complete-info-modal">
       <div>
-        <h1>{athleteInfo?.name}</h1>
-        <strong>{athleteInfo?.team}</strong>,{" "}
-        <strong>{athleteInfo?.age} years</strong>
+        <span className={css({ fontSize: "26", fontWeight: "bold" })}>
+          {athleteInfo?.name}
+        </span>
+        <div>
+          <i>{athleteInfo?.team}</i>, <i>{athleteInfo?.age} years</i>
+        </div>
       </div>
 
       <div>
-        {athleteMetrics && athleteMetrics.length > 0 ? (
+        {athleteMetrics ? (
           <MetricsGrid metrics={athleteMetrics}>
-            <IonRow>
-              <IonCol>
-                <IonSelect
-                  interface="popover"
-                  label="Filter by metric type"
-                  labelPlacement="floating"
-                  fill="outline"
-                  onIonChange={(e) =>
-                    setMetricTypeFilter(e.target.value! as METRIC_TYPES)
-                  }
-                >
-                  {Object.values(METRIC_TYPES).map((metricType, index) => (
-                    <IonSelectOption value={metricType} key={index}>
-                      {capitalizeText(metricType)}
-                    </IonSelectOption>
-                  ))}
-                </IonSelect>
+            <IonRow className={css({ mb: "4", width: "100%" })}>
+              <IonCol size="7">
+                {showForm ? null : (
+                  <IonSelect
+                    interface="popover"
+                    label="Filter by metric type"
+                    labelPlacement="floating"
+                    fill="outline"
+                    onIonChange={(e) =>
+                      setMetricTypeFilter(e.target.value! as METRIC_TYPES)
+                    }
+                  >
+                    {Object.values(METRIC_TYPES).map((metricType, index) => (
+                      <IonSelectOption value={metricType} key={index}>
+                        {capitalizeText(metricType)}
+                      </IonSelectOption>
+                    ))}
+                  </IonSelect>
+                )}
               </IonCol>
               {showForm ? (
                 <>
-                  <IonCol>
+                  <IonCol size="2" className={css({ ml: "2" })}>
                     <IonButton
+                      className={css({ h: "100%" })}
                       onClick={() => {
                         formRef.current &&
                           formRef.current.dispatchEvent(
@@ -121,15 +138,25 @@ export default function AthleteCompleteInfoModal({
                       <IonIcon icon={checkmarkCircle}></IonIcon>Save
                     </IonButton>
                   </IonCol>
-                  <IonCol>
-                    <IonButton onClick={() => setShowForm(false)}>
+                  <IonCol size="2">
+                    <IonButton
+                      className={css({ h: "100%", ml: "2" })}
+                      onClick={() => setShowForm(false)}
+                    >
                       <IonIcon icon={closeCircle}></IonIcon>Cancel
                     </IonButton>
                   </IonCol>
                 </>
               ) : (
-                <IonCol>
-                  <IonButton type="submit" onClick={() => setShowForm(true)}>
+                <IonCol size="auto" className={css({ ml: "8" })}>
+                  <IonButton
+                    type="submit"
+                    className={css({ h: "100%" })}
+                    onClick={() => {
+                      setMetricTypeFilter(undefined);
+                      setShowForm(true);
+                    }}
+                  >
                     <IonIcon icon={addCircle}></IonIcon>Add new metric
                   </IonButton>
                 </IonCol>

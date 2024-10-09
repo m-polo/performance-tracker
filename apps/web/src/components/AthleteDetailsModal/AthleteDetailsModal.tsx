@@ -1,6 +1,8 @@
 import { IonButton, IonCol, IonGrid, IonInput, IonRow } from "@ionic/react";
 import { useForm } from "react-hook-form";
+import { css } from "../../../styled-system/css";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
+import "../../theme/panda.css";
 
 type AthleteDetailsModalProps = {
   athlete?: Athlete;
@@ -13,61 +15,61 @@ export default function AthleteDetailsModal({
 }: AthleteDetailsModalProps) {
   const { handleSubmit, register } = useForm<AthleteBasicsDetails>({
     defaultValues: {
-      id: athlete?.id,
-      name: athlete?.name,
-      age: athlete?.age,
-      team: athlete?.team,
+      ...athlete,
     },
   });
 
   return (
-    <form
-      onSubmit={handleSubmit(onAthleteSubmit)}
-      className="ion-padding"
-      data-testid="athlete-details-modal"
-    >
-      <IonGrid>
-        <IonRow className="ion-padding">
-          <IonInput
-            {...register("name")}
-            labelPlacement="floating"
-            label="Name"
-            fill="outline"
-            required
-            maxlength={50}
-            counter
-          />
-        </IonRow>
-        <IonRow>
-          <IonCol className="ion-padding">
+    <div className={css({ p: "10" })}>
+      <form
+        onSubmit={handleSubmit(onAthleteSubmit)}
+        data-testid="athlete-details-modal"
+      >
+        <IonGrid>
+          <IonRow className={css({ mb: "2" })}>
             <IonInput
-              {...register("age")}
+              {...register("name")}
               labelPlacement="floating"
-              label="Age"
-              fill="outline"
-              required
-              min={0}
-              max={100}
-              type="number"
-            />
-          </IonCol>
-          <IonCol className="ion-padding">
-            <IonInput
-              {...register("team")}
-              labelPlacement="floating"
-              label="Team"
+              label="Name"
               fill="outline"
               required
               maxlength={50}
               counter
             />
-          </IonCol>
-        </IonRow>
+          </IonRow>
+          <IonRow className={css({ mb: "2" })}>
+            <IonCol className={css({ mr: "2" })}>
+              <IonInput
+                {...register("age")}
+                labelPlacement="floating"
+                label="Age"
+                fill="outline"
+                required
+                min={0}
+                max={100}
+                type="number"
+              />
+            </IonCol>
+            <IonCol className={css({ ml: "2" })}>
+              <IonInput
+                {...register("team")}
+                labelPlacement="floating"
+                label="Team"
+                fill="outline"
+                required
+                maxlength={50}
+                counter
+              />
+            </IonCol>
+          </IonRow>
 
-        <IonRow className="ion-padding">
-          <IonButton type="submit">Save</IonButton>
-        </IonRow>
-      </IonGrid>
-    </form>
+          <IonRow>
+            <IonButton type="submit" className={css({ w: "100%", h: "15" })}>
+              <strong>Save</strong>
+            </IonButton>
+          </IonRow>
+        </IonGrid>
+      </form>
+    </div>
   );
 }

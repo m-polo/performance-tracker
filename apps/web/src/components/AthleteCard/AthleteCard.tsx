@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
@@ -14,6 +15,8 @@ import { build, create, eye, trash } from "ionicons/icons";
 import { lazy, Suspense, useRef } from "react";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
 import Loading from "../Loading/Loading";
+import { css } from "../../../styled-system/css";
+import { circle } from "../../../styled-system/patterns";
 
 const AthleteCompleteInfoModal = lazy(
   () => import("../AthleteCompleteInfoModal/AthleteCompleteInfoModal")
@@ -43,38 +46,38 @@ export default function AthleteCard({
   const { id, name, age, team }: Athlete = athleteInfo;
 
   return (
-    <IonCard>
-      <div>
-        <IonCardHeader>
-          <IonCardTitle>{name}</IonCardTitle>
-          {age}
-          <IonCardSubtitle>{team}</IonCardSubtitle>
-        </IonCardHeader>
-        <IonFab vertical="center" horizontal="end">
-          <IonFabButton size="small">
-            <IonIcon icon={build}></IonIcon>
-          </IonFabButton>
-          <IonFabList side="start">
-            <IonFabButton
-              id={`complete-info-modal-${id}`}
-              data-testid="complete-info-modal-button"
-            >
-              <IonIcon icon={eye}></IonIcon>
-            </IonFabButton>
-            <IonFabButton
-              id={`details-modal-${id}`}
-              data-testid="edit-modal-button"
-            >
-              <IonIcon icon={create}></IonIcon>
-            </IonFabButton>
-            <IonFabButton
-              id={`delete-modal-${id}`}
-              data-testid="delete-modal-button"
-            >
-              <IonIcon icon={trash}></IonIcon>
-            </IonFabButton>
-          </IonFabList>
-        </IonFab>
+    <IonCard
+      className={css({
+        m: "2",
+        p: "4",
+        h: "20",
+        display: "flex",
+        flexDirection: "row",
+      })}
+    >
+      <IonCardHeader className={css({ flex: "75" })}>
+        <IonCardTitle>{name}</IonCardTitle>
+        <IonCardSubtitle>
+          {team}, {age} years
+        </IonCardSubtitle>
+      </IonCardHeader>
+      <div className={css({ flex: "25", alignContent: "center" })}>
+        <IonButton
+          id={`complete-info-modal-${id}`}
+          data-testid="complete-info-modal-button"
+        >
+          <IonIcon slot="icon-only" icon={eye} />
+        </IonButton>
+        <IonButton 
+          className={css({ ml: "4", mr: "4" })}
+          id={`details-modal-${id}`}
+          data-testid="edit-modal-button"
+        >
+          <IonIcon slot="icon-only" icon={create} />
+        </IonButton>
+        <IonButton id={`delete-modal-${id}`} data-testid="delete-modal-button">
+          <IonIcon slot="icon-only" icon={trash} />
+        </IonButton>
       </div>
 
       <IonModal trigger={`delete-modal-${id}`} ref={deleteModal}>
