@@ -13,7 +13,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { addCircle, checkmarkCircle, closeCircle } from "ionicons/icons";
+import { addCircle } from "ionicons/icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import { css } from "../../../styled-system/css";
 import { AuthContext } from "../../App";
@@ -101,7 +101,7 @@ export default function AthleteCompleteInfoModal({
       <div>
         {athleteMetrics ? (
           <MetricsGrid metrics={athleteMetrics}>
-            <IonRow className={css({ mb: "4", width: "100%" })}>
+            <IonRow className={css({ mb: "4", w: "100%", h: "14" })}>
               <IonCol size="7">
                 {showForm ? null : (
                   <IonSelect
@@ -124,9 +124,9 @@ export default function AthleteCompleteInfoModal({
               </IonCol>
               {showForm ? (
                 <>
-                  <IonCol size="2" className={css({ ml: "2" })}>
+                  <IonCol size="2">
                     <IonButton
-                      className={css({ h: "100%" })}
+                      className={css({ h: "100%", w: "100%" })}
                       onClick={() => {
                         formRef.current &&
                           formRef.current.dispatchEvent(
@@ -137,29 +137,35 @@ export default function AthleteCompleteInfoModal({
                           );
                       }}
                     >
-                      <IonIcon icon={checkmarkCircle}></IonIcon>Save
+                      Save
                     </IonButton>
                   </IonCol>
-                  <IonCol size="2">
+                  <IonCol size="3">
                     <IonButton
-                      className={css({ h: "100%", ml: "2" })}
+                      className={css({
+                        h: "100%",
+                        pl: "2",
+                        w: "100%",
+                      })}
+                      color={"danger"}
                       onClick={() => setShowForm(false)}
                     >
-                      <IonIcon icon={closeCircle}></IonIcon>Cancel
+                      Cancel
                     </IonButton>
                   </IonCol>
                 </>
               ) : (
-                <IonCol size="auto" className={css({ ml: "8" })}>
+                <IonCol size="5">
                   <IonButton
                     type="submit"
-                    className={css({ h: "100%" })}
+                    className={css({ h: "100%", w: "100%", pl: "4" })}
                     onClick={() => {
                       setMetricTypeFilter(undefined);
                       setShowForm(true);
                     }}
                   >
-                    <IonIcon icon={addCircle}></IonIcon>Add new metric
+                    <IonIcon icon={addCircle} />
+                    <span className={css({ ml: "2" })}>Add new metric</span>
                   </IonButton>
                 </IonCol>
               )}
