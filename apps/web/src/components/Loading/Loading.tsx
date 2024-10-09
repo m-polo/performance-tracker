@@ -12,10 +12,10 @@ export default function Loading() {
       })}
     >
       <ReactLoading
-        type={"spinningBubbles"}
+        type={"spin"}
         color={"gray"}
-        height={"60%"}
-        width={"60%"}
+        height={"20%"}
+        width={"20%"}
         className={css({
           display: "inline-block",
         })}
