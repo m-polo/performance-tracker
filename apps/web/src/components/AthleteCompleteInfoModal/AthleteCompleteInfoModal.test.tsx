@@ -18,7 +18,7 @@ const component: React.JSX.Element = (
 );
 
 describe("AthleteCompleteInfoModal tests", () => {
-  test.only("should render component with only athlete details", async () => {
+  test("should render component with only athlete details", async () => {
     vi.spyOn(axios, "get")
       .mockResolvedValueOnce({ data: athlete })
       .mockResolvedValueOnce({ data: [] });
