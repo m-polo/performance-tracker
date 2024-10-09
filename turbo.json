@@ -10,9 +10,6 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
-    "prepare": {
-      "dependsOn": ["^prepare"]
-    },
     "db:migrate:deploy": {},
     "db:seed": {},
     "generate": {
