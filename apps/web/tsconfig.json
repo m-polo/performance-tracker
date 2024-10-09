@@ -12,7 +12,7 @@
     "noEmit": true,
   },
   "include": ["**/*.ts", "**/*.tsx", "styled-system"],
-  "exclude": ["/**/*.config.ts"],
+  "exclude": ["/**/vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "extends": "@pertrack/typescript-config/react-library.json",
 }
