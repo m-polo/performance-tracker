@@ -24,8 +24,8 @@ describe("AthletesDashboard tests", () => {
     render(component);
 
     await waitFor(() => {
-      expect(screen.getByText("name")).toBeInTheDocument();
-      expect(screen.getByText("name2")).toBeInTheDocument();
+      expect(screen.getByText(athletes[0].name)).toBeInTheDocument();
+      expect(screen.getByText(athletes[1].name)).toBeInTheDocument();
     });
   });
 
