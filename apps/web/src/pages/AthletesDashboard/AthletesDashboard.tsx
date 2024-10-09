@@ -14,7 +14,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { add, close } from "ionicons/icons";
-import { lazy, Suspense, useContext, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { css } from "../../../styled-system/css";
 import { AuthContext } from "../../App";
 import AthleteCard from "../../components/AthleteCard/AthleteCard";
@@ -40,6 +40,7 @@ export default function AthletesDashboard() {
   const createModal = useRef<HTMLIonModalElement>(null);
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [searchText, setSearchText] = useState<string>("");
+  const itemsInPairs = useMemo(() => groupItemsInPairs(athletes), [athletes])
 
   const { data, isLoading } = useQuery<Athlete[]>({
     queryKey: ["athleteList", searchText],
@@ -120,9 +121,9 @@ export default function AthletesDashboard() {
 
         {isLoading ? <Loading /> : null}
 
-        {groupItemsInPairs(athletes).map(
-          (athletePair: [Athlete, Athlete | null]) => (
-            <div className={css({ display: "flex", flexDirection: "row" })}>
+        {itemsInPairs.map(
+          (athletePair: [Athlete, Athlete | null], index) => (
+            <div className={css({ display: "flex", flexDirection: "row" })} key={index}>
               <div className={css({ flex: "50" })}>
                 <AthleteCard
                   athleteInfo={athletePair[0]}

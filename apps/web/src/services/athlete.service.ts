@@ -28,7 +28,7 @@ export function deleteAthlete(
   id: number,
   token: string
 ): Promise<AxiosResponse> {
-  return axios.post(`${baseUrl}/athletes`, id, authHeader(token));
+  return axios.delete(`${baseUrl}/athletes/${id}`, authHeader(token));
 }
 
 export function editAthlete(

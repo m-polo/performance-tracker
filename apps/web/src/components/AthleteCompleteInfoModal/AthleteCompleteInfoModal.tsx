@@ -15,6 +15,7 @@ import {
 } from "@tanstack/react-query";
 import { addCircle, checkmarkCircle, closeCircle } from "ionicons/icons";
 import { useContext, useEffect, useRef, useState } from "react";
+import { css } from "../../../styled-system/css";
 import { AuthContext } from "../../App";
 import { getAthleteById } from "../../services/athlete.service";
 import {
@@ -24,10 +25,9 @@ import {
 import { Athlete, Metric, METRIC_TYPES } from "../../shared/interfaces";
 import { errorToast, successToast } from "../../shared/toasts";
 import capitalizeText from "../../shared/utils";
+import Loading from "../Loading/Loading";
 import MetricForm from "../MetricForm/MetricForm";
 import MetricsGrid from "../MetricsGrid/MetricsGrid";
-import { css } from "../../../styled-system/css";
-import Loading from "../Loading/Loading";
 
 type AthleteCompleteInfoModalProps = {
   athleteId: number;
@@ -62,12 +62,13 @@ export default function AthleteCompleteInfoModal({
   });
 
   const { mutate } = useMutation({
-    mutationFn: async (newMetric: Metric) => {
-      addNewMetric(newMetric, athleteId, token);
-    },
+    mutationFn: async (newMetric: Metric) =>
+      addNewMetric(newMetric, athleteId, token),
     onSuccess: () => {
       present(successToast("Metric added correctly"));
-      queryClient.invalidateQueries({ queryKey: ["athleteCompleteInfo"] });
+      queryClient.invalidateQueries({
+        queryKey: ["filterAthleteMetrics"],
+      });
       setShowForm(false);
     },
     onError: () => present(errorToast("Error adding metric")),
@@ -82,8 +83,8 @@ export default function AthleteCompleteInfoModal({
     setAthleteMetrics(filterMetricsQuery?.data);
   }, [filterMetricsQuery.data]);
 
-  if(athleteQuery.isLoading ){
-    return <Loading />
+  if (athleteQuery.isLoading) {
+    return <Loading />;
   }
 
   return (
@@ -112,6 +113,7 @@ export default function AthleteCompleteInfoModal({
                       setMetricTypeFilter(e.target.value! as METRIC_TYPES)
                     }
                   >
+                    <IonSelectOption value={""}>All</IonSelectOption>
                     {Object.values(METRIC_TYPES).map((metricType, index) => (
                       <IonSelectOption value={metricType} key={index}>
                         {capitalizeText(metricType)}
