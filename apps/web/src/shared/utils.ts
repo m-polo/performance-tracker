@@ -18,3 +18,7 @@ export const groupItemsInPairs = (
 
   return grouped;
 };
+
+export const authHeader = (token: string) => ({
+  headers: { Authorization: `Bearer ${token}` },
+});

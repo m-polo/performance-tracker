@@ -16,8 +16,8 @@ import {
 import { addCircle } from "ionicons/icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import { css } from "../../../styled-system/css";
-import { AuthContext } from "../../App";
 import { getAthleteById } from "../../services/athlete.service";
+import { ApiClientContext, AuthContext } from "../../services/contexts";
 import {
   addNewMetric,
   getFilteredMetricsFromAthlete,
@@ -43,33 +43,44 @@ export default function AthleteCompleteInfoModal({
   const [metricTypeFilter, setMetricTypeFilter] = useState<METRIC_TYPES>();
   const queryClient: QueryClient = useQueryClient();
   const token: string = useContext(AuthContext);
+  const apiClient = useContext(ApiClientContext);
   const formRef = useRef<HTMLFormElement>();
 
-  const athleteQuery = useQuery<Athlete>({
+  const athleteQuery = useQuery<Athlete | undefined>({
     queryKey: ["athleteCompleteInfo", athleteId],
     queryFn: () =>
-      getAthleteById(athleteId)
-        .then((res) => res.data)
-        .catch(() => present(errorToast("Error getting athlete info"))),
+      getAthleteById(apiClient, athleteId)
+        .then(async (res) => (await res.json()) as Athlete)
+        .catch(() => {
+          present(errorToast("Error getting athlete info"));
+          return undefined;
+        }),
   });
 
-  const filterMetricsQuery = useQuery<Metric[]>({
+  const filterMetricsQuery = useQuery<Metric[] | undefined>({
     queryKey: ["filterAthleteMetrics", athleteId, metricTypeFilter],
     queryFn: () =>
-      getFilteredMetricsFromAthlete(athleteId, metricTypeFilter)
-        .then((res) => res.data)
-        .catch(() => present(errorToast("Error filtering metrics"))),
+      getFilteredMetricsFromAthlete(apiClient, athleteId, metricTypeFilter)
+        .then(async (res) => (await res.json()) as Metric[])
+        .catch(() => {
+          present(errorToast("Error filtering metrics"));
+          return [];
+        }),
   });
 
   const { mutate } = useMutation({
     mutationFn: async (newMetric: Metric) =>
-      addNewMetric(newMetric, athleteId, token),
-    onSuccess: () => {
-      present(successToast("Metric added correctly"));
-      queryClient.invalidateQueries({
-        queryKey: ["filterAthleteMetrics"],
-      });
-      setShowForm(false);
+      addNewMetric(apiClient, newMetric, athleteId, token),
+    onSuccess: ({ status }) => {
+      if (status === 201) {
+        present(successToast("Metric added correctly"));
+        queryClient.invalidateQueries({
+          queryKey: ["filterAthleteMetrics"],
+        });
+        setShowForm(false);
+      } else {
+        present(errorToast("Error adding metric"));
+      }
     },
     onError: () => present(errorToast("Error adding metric")),
   });

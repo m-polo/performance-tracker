@@ -1,29 +1,41 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { ApiClientType } from "../App";
 import { Metric, METRIC_TYPES } from "../shared/interfaces";
-
-const baseUrl: string = import.meta.env.VITE_BASE_URL;
-
-const authHeader = (token: string): AxiosRequestConfig => ({
-  headers: { Authorization: `Bearer ${token}` },
-});
+import { authHeader } from "../shared/utils";
 
 export function getFilteredMetricsFromAthlete(
+  client: ApiClientType,
   athleteId: number,
-  metricTypeFilter: METRIC_TYPES | undefined
-): Promise<AxiosResponse> {
-  return axios.get(
-    `${baseUrl}/athletes/${athleteId}/metrics${metricTypeFilter ? `?metricType=${metricTypeFilter}` : ""}`
-  );
+  metricType?: METRIC_TYPES
+) {
+  return client.athletes[":id"].metrics.$get({
+    param: {
+      id: athleteId.toString(),
+    },
+    query: {
+      metricType: metricType?.toString(),
+    },
+  });
 }
 
 export function addNewMetric(
+  client: ApiClientType,
   metric: Metric,
   athleteId: number,
   token: string
-): Promise<AxiosResponse> {
-  return axios.post(
-    `${baseUrl}/athletes/${athleteId}/metrics`,
-    metric,
+) {
+  return client.athletes[":id"].metrics.$post(
+    {
+      param: {
+        id: athleteId.toString(),
+      },
+      json: {
+        ...metric,
+        metricType: metric.metricType.toString(),
+        unit: metric.unit.toString(),
+        athleteId,
+        value: metric.value.toString(),
+      },
+    },
     authHeader(token)
   );
 }

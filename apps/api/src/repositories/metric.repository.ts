@@ -28,7 +28,7 @@ export default class MetricRepository implements Repository<Metric> {
     });
   }
 
-  async edit(id: number, item: Metric): Promise<Metric> {
+  async update(id: number, item: Metric): Promise<Metric> {
     return prisma.metric.update({
       data: {
         ...item,
@@ -39,13 +39,13 @@ export default class MetricRepository implements Repository<Metric> {
     });
   }
 
-  async remove(id: number): Promise<void> {
+  async delete(id: number): Promise<void> {
     await prisma.metric.delete({
       where: { id },
     });
   }
 
-  async add(item: Metric): Promise<Metric> {
+  async create(item: Metric): Promise<Metric> {
     return prisma.metric.create({
       data: {
         ...item,

@@ -1,14 +1,10 @@
 {
   "extends": "@pertrack/typescript-config/react-library.json",
   "compilerOptions": {
-  "target": "ESNext",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": [
-      "node",
-      "jest"
-    ],
-    "jsxImportSource": "hono/jsx",
+    "types": ["node", "jest"]
   },
   "exclude": ["node_modules", "**/*.test.ts"]
 }

@@ -4,19 +4,15 @@ import {
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
-  IonFab,
-  IonFabButton,
-  IonFabList,
   IonIcon,
   IonModal,
 } from "@ionic/react";
 
-import { build, create, eye, trash } from "ionicons/icons";
+import { create, eye, trash } from "ionicons/icons";
 import { lazy, Suspense, useRef } from "react";
+import { css } from "../../../styled-system/css";
 import { Athlete, AthleteBasicsDetails } from "../../shared/interfaces";
 import Loading from "../Loading/Loading";
-import { css } from "../../../styled-system/css";
-import { circle } from "../../../styled-system/patterns";
 
 const AthleteCompleteInfoModal = lazy(
   () => import("../AthleteCompleteInfoModal/AthleteCompleteInfoModal")
@@ -68,7 +64,7 @@ export default function AthleteCard({
         >
           <IonIcon slot="icon-only" icon={eye} />
         </IonButton>
-        <IonButton 
+        <IonButton
           className={css({ ml: "4", mr: "4" })}
           id={`details-modal-${id}`}
           data-testid="edit-modal-button"

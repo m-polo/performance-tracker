@@ -1,79 +1,126 @@
+import { zValidator } from "@hono/zod-validator";
 import { Athlete } from "@pertrack/database";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import AthleteRepository from "../repositories/athlete.repository";
+import {
+  addAthleteSchema,
+  deleteAthleteSchema,
+  editJsonAthleteSchema,
+  editParamAthleteSchema,
+  getAllAthletesSchema,
+  getAthleteSchema,
+} from "../schemas/athlete.schema";
+import {
+  addAthlete,
+  deleteAthlete,
+  editAthlete,
+  getAthlete,
+  getAthletes,
+} from "../services/athlete.service";
 import metrics from "./metrics.route";
+import { checkValidationResult } from "./routes.utils";
 
-const athletes: Hono = new Hono();
-const athleteRepository: AthleteRepository = new AthleteRepository();
-
-athletes.get("", async (c) => {
-  try {
-    const searchText: string | undefined = c.req.query("searchText");
-    const athletes: Athlete[] = await athleteRepository.getAll(searchText);
-    return c.json(athletes, 200);
-  } catch (error) {
-    throw new HTTPException(500, {
-      message: "Error getting athletes list",
-      cause: error,
-    });
-  }
-});
-
-athletes.get("/:id", async (c) => {
-  try {
-    const athleteId = c.req.param("id");
-    const athlete: Athlete = await athleteRepository.getById(Number(athleteId));
-    return c.json(athlete, 200);
-  } catch (error) {
-    throw new HTTPException(500, {
-      message: "Error getting athlete",
-      cause: error,
-    });
-  }
-});
-
-athletes.post("", authMiddleware(), async (c) => {
-  try {
-    const athlete: Athlete = await c.req.json<Athlete>();
-    const { id } = await athleteRepository.add(athlete);
-    return c.json({ ...athlete, id }, 201);
-  } catch (error) {
-    throw new HTTPException(500, {
-      message: "Error adding athlete",
-      cause: error,
-    });
-  }
-});
-
-athletes.put("/:id", authMiddleware(), async (c) => {
-  try {
-    const athleteId = c.req.param("id");
-    const athlete: Athlete = await c.req.json();
-    const { id } = await athleteRepository.edit(Number(athleteId), athlete);
-    return c.json(id, 200);
-  } catch (error) {
-    throw new HTTPException(500, {
-      message: "Error editing athlete",
-      cause: error,
-    });
-  }
-});
-
-athletes.delete("/:id", authMiddleware(), async (c) => {
-  try {
-    const athleteId = c.req.param("id");
-    await athleteRepository.remove(Number(athleteId));
-    return c.body(null, 204);
-  } catch (error) {
-    throw new HTTPException(500, {
-      message: "Error deleting athlete",
-      cause: error,
-    });
-  }
-});
-
-athletes.route("/:id/metrics", metrics);
+const athletes = new Hono()
+  .get(
+    "",
+    zValidator("query", getAllAthletesSchema, ({ success }) =>
+      checkValidationResult(success)
+    ),
+    async (c) => {
+      try {
+        const { searchText } = c.req.valid("query");
+        const athletes: Athlete[] = await getAthletes(searchText);
+        return c.json(athletes, 200);
+      } catch (error) {
+        throw new HTTPException(500, {
+          message: "Error getting athletes list",
+          cause: error,
+        });
+      }
+    }
+  )
+  .get(
+    "/:id",
+    zValidator("param", getAthleteSchema, ({ success }) =>
+      checkValidationResult(success)
+    ),
+    async (c) => {
+      try {
+        const { id } = c.req.valid("param");
+        const athlete: Athlete = await getAthlete(id);
+        return c.json(athlete, 200);
+      } catch (error) {
+        throw new HTTPException(500, {
+          message: "Error getting athlete",
+          cause: error,
+        });
+      }
+    }
+  )
+  .post(
+    "",
+    zValidator("json", addAthleteSchema, ({ success }) =>
+      checkValidationResult(success)
+    ),
+    authMiddleware(),
+    async (c) => {
+      try {
+        const athlete: Athlete = c.req.valid("json") as unknown as Athlete;
+        const { id } = await addAthlete(athlete);
+        return c.json({ ...athlete, id }, 201);
+      } catch (error) {
+        throw new HTTPException(500, {
+          message: "Error adding athlete",
+          cause: error,
+        });
+      }
+    }
+  )
+  .put(
+    "/:id",
+    zValidator("json", editJsonAthleteSchema, ({ success }) =>
+      checkValidationResult(success)
+    ),
+    zValidator("param", editParamAthleteSchema, ({ success }) =>
+      checkValidationResult(success)
+    ),
+    authMiddleware(),
+    async (c) => {
+      try {
+        const { id } = c.req.valid("param");
+        const editedAthlete: Athlete = c.req.valid(
+          "json"
+        ) as unknown as Athlete;
+        const athlete: Athlete = await editAthlete(id, editedAthlete);
+        return c.json(athlete, 200);
+      } catch (error) {
+        throw new HTTPException(500, {
+          message: "Error editing athlete",
+          cause: error,
+        });
+      }
+    }
+  )
+  .delete(
+    "/:id",
+    zValidator("param", deleteAthleteSchema, ({ success }) =>
+      checkValidationResult(success)
+    ),
+    authMiddleware(),
+    async (c) => {
+      try {
+        const { id } = c.req.valid("param");
+        await deleteAthlete(id);
+        return c.json(null, 204);
+      } catch (error) {
+        throw new HTTPException(500, {
+          message: "Error deleting athlete",
+          cause: error,
+        });
+      }
+    }
+  )
+  .route("/:id/metrics", metrics);
 
 export default athletes;

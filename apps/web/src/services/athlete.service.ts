@@ -1,43 +1,53 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { ApiClientType } from "../App";
 import { AthleteBasicsDetails } from "../shared/interfaces";
+import { authHeader } from "../shared/utils";
 
-const baseUrl: string = import.meta.env.VITE_BASE_URL;
-
-const authHeader = (token: string): AxiosRequestConfig => ({
-  headers: { Authorization: `Bearer ${token}` },
-});
-
-export function getAllAthletes(searchText: string): Promise<AxiosResponse> {
-  return axios.get(
-    `${baseUrl}/athletes${searchText ? `?searchText=${searchText}` : ""}`
-  );
+export function getAllAthletes(client: ApiClientType, searchText: string) {
+  return client.athletes.$get({ query: { searchText } });
 }
 
-export function getAthleteById(id: number): Promise<AxiosResponse> {
-  return axios.get(`${baseUrl}/athletes/${id}`);
+export function getAthleteById(client: ApiClientType, id: number) {
+  return client.athletes[":id"].$get({
+    param: {
+      id: id.toString(),
+    },
+  });
 }
 
 export function addNewAthlete(
+  client: ApiClientType,
   athlete: AthleteBasicsDetails,
   token: string
-): Promise<AxiosResponse> {
-  return axios.post(`${baseUrl}/athletes`, athlete, authHeader(token));
+) {
+  return client.athletes.$post(
+    {
+      json: { ...athlete, age: athlete.age.toString() },
+    },
+    authHeader(token)
+  );
 }
 
 export function deleteAthlete(
+  client: ApiClientType,
   id: number,
   token: string
-): Promise<AxiosResponse> {
-  return axios.delete(`${baseUrl}/athletes/${id}`, authHeader(token));
+) {
+  return client.athletes[":id"].$delete(
+    { param: { id: id.toString() } },
+    authHeader(token)
+  );
 }
 
 export function editAthlete(
+  client: ApiClientType,
   athlete: AthleteBasicsDetails,
   token: string
-): Promise<AxiosResponse> {
-  return axios.put(
-    `${baseUrl}/athletes/${athlete.id}`,
-    athlete,
+) {
+  return client.athletes[":id"].$put(
+    {
+      json: { ...athlete, id: athlete.id! },
+      param: { id: athlete.id!.toString() },
+    },
     authHeader(token)
   );
 }

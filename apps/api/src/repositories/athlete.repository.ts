@@ -28,7 +28,7 @@ export default class AthleteRepository implements Repository<Athlete> {
     });
   }
 
-  async edit(id: number, item: Athlete): Promise<Athlete> {
+  async update(id: number, item: Athlete): Promise<Athlete> {
     return prisma.athlete.update({
       data: {
         ...item,
@@ -38,13 +38,13 @@ export default class AthleteRepository implements Repository<Athlete> {
     });
   }
 
-  async remove(id: number): Promise<void> {
+  async delete(id: number): Promise<void> {
     await prisma.athlete.delete({
       where: { id },
     });
   }
 
-  async add(item: Athlete): Promise<Athlete> {
+  async create(item: Athlete): Promise<Athlete> {
     return prisma.athlete.create({
       data: {
         ...item,
