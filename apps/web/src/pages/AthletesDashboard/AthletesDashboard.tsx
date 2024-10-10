@@ -5,14 +5,8 @@ import {
   IonModal,
   IonPage,
   IonSearchbar,
-  useIonToast,
 } from "@ionic/react";
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { add, close } from "ionicons/icons";
 import {
   lazy,
@@ -27,14 +21,13 @@ import { css } from "../../../styled-system/css";
 import AthleteCard from "../../components/AthleteCard/AthleteCard";
 import Loading from "../../components/Loading/Loading";
 import {
-  addNewAthlete,
-  deleteAthlete,
-  editAthlete,
-  getAllAthletes,
-} from "../../services/athlete.service";
-import { ApiClientContext, AuthContext } from "../../services/contexts";
+  useAddAthlete,
+  useDeleteAthlete,
+  useEditAthlete,
+  useGetAllAthletes,
+} from "../../hooks/athlete.hooks";
+import { ApiClientContext, AuthContext } from "../../shared/contexts";
 import { AthleteBasicsDetails } from "../../shared/interfaces";
-import { errorToast, successToast } from "../../shared/toasts";
 import { groupItemsInPairs } from "../../shared/utils";
 
 const AthleteDetailsModal = lazy(
@@ -42,7 +35,6 @@ const AthleteDetailsModal = lazy(
 );
 
 export default function AthletesDashboard() {
-  const [present] = useIonToast();
   const token: string = useContext(AuthContext);
   const apiClient = useContext(ApiClientContext);
   const queryClient: QueryClient = useQueryClient();
@@ -51,58 +43,10 @@ export default function AthletesDashboard() {
   const [searchText, setSearchText] = useState<string>("");
   const itemsInPairs = useMemo(() => groupItemsInPairs(athletes), [athletes]);
 
-  const { data, isLoading } = useQuery<AthleteBasicsDetails[]>({
-    queryKey: ["athleteList", searchText],
-    queryFn: () =>
-      getAllAthletes(apiClient, searchText)
-        .then(async (res) => (await res.json()) as AthleteBasicsDetails[])
-        .catch(() => {
-          present(errorToast("Error getting athletes"));
-          return [];
-        }),
-  });
-
-  const createAthleteMutation = useMutation({
-    mutationFn: async (newAthlete: AthleteBasicsDetails) =>
-      addNewAthlete(apiClient, newAthlete, token),
-    onSuccess: ({ status }) => {
-      if (status === 201) {
-        present(successToast("Athlete added correctly"));
-        queryClient.invalidateQueries({ queryKey: ["athleteList"] });
-      } else {
-        present(errorToast("Error adding athlete"));
-      }
-    },
-    onError: () => present(errorToast("Error adding athlete")),
-  });
-
-  const deleteAthleteMutation = useMutation({
-    mutationFn: async (athleteDeletedId: number) =>
-      deleteAthlete(apiClient, athleteDeletedId, token),
-    onSuccess: ({ status }) => {
-      if (status === 204) {
-        present(successToast("Athlete deleted correctly"));
-        queryClient.invalidateQueries({ queryKey: ["athleteList"] });
-      } else {
-        present(errorToast("Error deleting athlete"));
-      }
-    },
-    onError: () => present(errorToast("Error deleting athlete")),
-  });
-
-  const updateAthleteMutation = useMutation({
-    mutationFn: async (athlete: AthleteBasicsDetails) =>
-      editAthlete(apiClient, athlete, token),
-    onSuccess: ({ status }) => {
-      if (status === 200) {
-        present(successToast("Athlete edited correctly"));
-        queryClient.invalidateQueries({ queryKey: ["athleteList"] });
-      } else {
-        present(errorToast("Error editing athlete"));
-      }
-    },
-    onError: () => present(errorToast("Error editing athlete")),
-  });
+  const { data, isLoading } = useGetAllAthletes(apiClient, searchText);
+  const createAthleteMutation = useAddAthlete(apiClient, queryClient, token);
+  const deleteAthleteMutation = useDeleteAthlete(apiClient, queryClient, token);
+  const updateAthleteMutation = useEditAthlete(apiClient, queryClient, token);
 
   useEffect(() => {
     if (data) {

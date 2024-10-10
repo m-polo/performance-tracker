@@ -28,7 +28,7 @@ import "@ionic/react/css/palettes/dark.system.css";
 
 /* Theme variables */
 
-import { ApiClientContext, AuthContext } from "./services/contexts";
+import { ApiClientContext, AuthContext } from "./shared/contexts";
 import { errorToast } from "./shared/toasts";
 import "./theme/panda.css";
 import "./theme/variables.css";

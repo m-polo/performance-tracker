@@ -112,7 +112,7 @@ const athletes = new Hono()
       try {
         const { id } = c.req.valid("param");
         await deleteAthlete(id);
-        return c.json(null, 204);
+        return c.body(null, 204);
       } catch (error) {
         throw new HTTPException(500, {
           message: "Error deleting athlete",

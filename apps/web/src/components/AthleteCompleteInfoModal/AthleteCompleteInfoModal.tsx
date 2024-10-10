@@ -5,25 +5,15 @@ import {
   IonRow,
   IonSelect,
   IonSelectOption,
-  useIonToast,
 } from "@ionic/react";
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { addCircle } from "ionicons/icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import { css } from "../../../styled-system/css";
-import { getAthleteById } from "../../services/athlete.service";
-import { ApiClientContext, AuthContext } from "../../services/contexts";
-import {
-  addNewMetric,
-  getFilteredMetricsFromAthlete,
-} from "../../services/metric.service";
+import { useGetAthleteInfo } from "../../hooks/athlete.hooks";
+import { useAddMetric, useGetFilteredMetrics } from "../../hooks/metric.hooks";
+import { ApiClientContext, AuthContext } from "../../shared/contexts";
 import { Athlete, Metric, METRIC_TYPES } from "../../shared/interfaces";
-import { errorToast, successToast } from "../../shared/toasts";
 import capitalizeText from "../../shared/utils";
 import Loading from "../Loading/Loading";
 import MetricForm from "../MetricForm/MetricForm";
@@ -36,54 +26,30 @@ type AthleteCompleteInfoModalProps = {
 export default function AthleteCompleteInfoModal({
   athleteId,
 }: AthleteCompleteInfoModalProps) {
-  const [present] = useIonToast();
   const [showForm, setShowForm] = useState<boolean>(false);
   const [athleteInfo, setAthleteInfo] = useState<Athlete>();
   const [athleteMetrics, setAthleteMetrics] = useState<Metric[]>();
   const [metricTypeFilter, setMetricTypeFilter] = useState<METRIC_TYPES>();
+
   const queryClient: QueryClient = useQueryClient();
-  const token: string = useContext(AuthContext);
-  const apiClient = useContext(ApiClientContext);
   const formRef = useRef<HTMLFormElement>();
 
-  const athleteQuery = useQuery<Athlete | undefined>({
-    queryKey: ["athleteCompleteInfo", athleteId],
-    queryFn: () =>
-      getAthleteById(apiClient, athleteId)
-        .then(async (res) => (await res.json()) as Athlete)
-        .catch(() => {
-          present(errorToast("Error getting athlete info"));
-          return undefined;
-        }),
-  });
+  const token: string = useContext(AuthContext);
+  const apiClient = useContext(ApiClientContext);
 
-  const filterMetricsQuery = useQuery<Metric[] | undefined>({
-    queryKey: ["filterAthleteMetrics", athleteId, metricTypeFilter],
-    queryFn: () =>
-      getFilteredMetricsFromAthlete(apiClient, athleteId, metricTypeFilter)
-        .then(async (res) => (await res.json()) as Metric[])
-        .catch(() => {
-          present(errorToast("Error filtering metrics"));
-          return [];
-        }),
-  });
-
-  const { mutate } = useMutation({
-    mutationFn: async (newMetric: Metric) =>
-      addNewMetric(apiClient, newMetric, athleteId, token),
-    onSuccess: ({ status }) => {
-      if (status === 201) {
-        present(successToast("Metric added correctly"));
-        queryClient.invalidateQueries({
-          queryKey: ["filterAthleteMetrics"],
-        });
-        setShowForm(false);
-      } else {
-        present(errorToast("Error adding metric"));
-      }
-    },
-    onError: () => present(errorToast("Error adding metric")),
-  });
+  const athleteQuery = useGetAthleteInfo(apiClient, athleteId);
+  const filterMetricsQuery = useGetFilteredMetrics(
+    apiClient,
+    athleteId,
+    metricTypeFilter
+  );
+  const { mutate } = useAddMetric(
+    apiClient,
+    queryClient,
+    athleteId,
+    token,
+    setShowForm
+  );
 
   useEffect(() => {
     setAthleteInfo(athleteQuery?.data);
