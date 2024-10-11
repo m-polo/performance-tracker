@@ -60,10 +60,10 @@ const athletes = new Hono()
   )
   .post(
     "",
+    authMiddleware(),
     zValidator("json", addAthleteSchema, ({ success }) =>
       checkValidationResult(success)
     ),
-    authMiddleware(),
     async (c) => {
       try {
         const athlete: Athlete = c.req.valid("json") as unknown as Athlete;
@@ -79,13 +79,13 @@ const athletes = new Hono()
   )
   .put(
     "/:id",
+    authMiddleware(),
     zValidator("json", editJsonAthleteSchema, ({ success }) =>
       checkValidationResult(success)
     ),
     zValidator("param", editParamAthleteSchema, ({ success }) =>
       checkValidationResult(success)
     ),
-    authMiddleware(),
     async (c) => {
       try {
         const { id } = c.req.valid("param");
@@ -104,10 +104,10 @@ const athletes = new Hono()
   )
   .delete(
     "/:id",
+    authMiddleware(),
     zValidator("param", deleteAthleteSchema, ({ success }) =>
       checkValidationResult(success)
     ),
-    authMiddleware(),
     async (c) => {
       try {
         const { id } = c.req.valid("param");

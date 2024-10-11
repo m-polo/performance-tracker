@@ -38,13 +38,11 @@ const metrics = new Hono()
   )
   .post(
     "",
-    zValidator("json", addMetricJsonSchema, ({ success }) =>
-      checkValidationResult(success)
-    ),
+    authMiddleware(),
+    zValidator("json", addMetricJsonSchema),
     zValidator("param", paramSchema, ({ success }) =>
       checkValidationResult(success)
     ),
-    authMiddleware(),
     async (c) => {
       try {
         const { id } = c.req.valid("param")!;

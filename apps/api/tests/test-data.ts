@@ -15,6 +15,14 @@ export const athlete2: Athlete = {
 
 export const athletes: Athlete[] = [athlete1, athlete2];
 
+export const newMetric: Metric = {
+  athleteId: 1,
+  metricType: MetricTypes.SPEED,
+  value: 1,
+  unit: Units.METERS_SECOND,
+  timestamp: new Date(),
+} as Metric;
+
 export const metric1: Metric = {
   id: 1,
   athleteId: 1,

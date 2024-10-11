@@ -5,11 +5,11 @@ const authHeader = (token: string): AxiosRequestConfig => ({
   headers: { Authorization: `Bearer ${token}` },
 });
 
-const athlete: Athlete = {
-  age: 1,
+const athlete = {
+  age: "1",
   name: "name",
   team: "team",
-} as Athlete;
+};
 
 describe("Athletes routes integration tests", () => {
   describe("When database is working correctly", () => {
@@ -38,11 +38,13 @@ describe("Athletes routes integration tests", () => {
     });
 
     describe("When user authenticated", () => {
+      const name: string = "name";
+      let email: string = "email";
       let token: string;
 
       beforeEach(async () => {
         const response = await axios.get<string>(
-          "http://localhost:3000/auth/token"
+          `http://localhost:3000/auth/token?name=${name}&email=${email}`
         );
 
         token = response.data;
@@ -115,11 +117,8 @@ describe("Athletes routes integration tests", () => {
 
       test("Add athlete returns an error", () => {
         expect(
-          axios.post<Athlete>("http://localhost:3000/athletes", {
-            ...athlete,
-            id: undefined,
-          })
-        ).rejects.toThrow();
+          axios.post<Athlete>("http://localhost:3000/athletes", athlete)
+        ).rejects.toThrow("Request failed with status code 401");
       });
 
       test("Edit athlete returns an error", () => {
@@ -130,13 +129,53 @@ describe("Athletes routes integration tests", () => {
             ...athlete,
             name: newName,
           })
-        ).rejects.toThrow();
+        ).rejects.toThrow("Request failed with status code 401");
       });
 
       test("Delete athlete returns an error", () => {
         expect(
           axios.delete<Athlete>(`http://localhost:3000/athletes/${athlete!.id}`)
-        ).rejects.toThrow();
+        ).rejects.toThrow("Request failed with status code 401");
+      });
+    });
+
+    describe("When schema is not valid", () => {
+      const name: string = "name";
+      let email: string = "email";
+      let token: string;
+
+      beforeEach(async () => {
+        const response = await axios.get<string>(
+          `http://localhost:3000/auth/token?name=${name}&email=${email}`
+        );
+
+        token = response.data;
+      });
+
+      test("Add athlete returns an error", () => {
+        expect(
+          axios.post<Athlete>(
+            "http://localhost:3000/athletes",
+            {},
+            authHeader(token)
+          )
+        ).rejects.toThrow("Request failed with status code 400");
+      });
+
+      test("Edit athlete returns an error", async () => {
+        const { data } = await axios.post<Athlete>(
+          "http://localhost:3000/athletes",
+          athlete,
+          authHeader(token)
+        );
+
+        expect(
+          axios.put<Athlete>(
+            `http://localhost:3000/athletes/${data.id}`,
+            {},
+            authHeader(token)
+          )
+        ).rejects.toThrow("Request failed with status code 400");
       });
     });
   });
