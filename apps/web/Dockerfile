@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 RUN npm install turbo --global
 COPY . .
-RUN turbo prune web --docker
+RUN turbo prune @pertrack/web --docker
 
 FROM base AS installer
 RUN apk update
@@ -20,7 +20,7 @@ COPY --from=builder /app/out/full/ .
 RUN npm install
 RUN cp -n ./apps/web/.env.example ./apps/web/.env
 RUN npm install turbo --global
-RUN turbo build --filter=web
+RUN turbo build --filter=@pertrack/web
 
 FROM base AS runner
 WORKDIR /app
