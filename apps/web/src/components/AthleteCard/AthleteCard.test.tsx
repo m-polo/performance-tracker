@@ -29,7 +29,9 @@ describe("AthleteCard tests", () => {
 
     await waitFor(() => {
       expect(screen.getByText(athlete.name)).toBeInTheDocument();
-      expect(screen.getByText(`${athlete.team}, ${athlete.age} years`)).toBeInTheDocument();
+      expect(
+        screen.getByText(`${athlete.team}, ${athlete.age} years`)
+      ).toBeInTheDocument();
     });
   });
 

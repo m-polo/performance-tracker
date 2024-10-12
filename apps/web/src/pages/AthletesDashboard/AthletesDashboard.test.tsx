@@ -1,9 +1,11 @@
 import { IonApp } from "@ionic/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import axios from "axios";
+import { ClientResponse } from "hono/client";
 import React from "react";
 import { describe, expect, test, vi } from "vitest";
+import * as athleteService from "../../services/athlete.service";
+import { AthleteBasicsDetails } from "../../shared/interfaces";
 import { athletes } from "../../test-data";
 import AthletesDashboard from "./AthletesDashboard";
 
@@ -19,7 +21,13 @@ const component: React.JSX.Element = (
 
 describe("AthletesDashboard tests", () => {
   test("should present component with a list of athletes", async () => {
-    vi.spyOn(axios, "get").mockResolvedValue({ data: athletes });
+    vi.spyOn(athleteService, "getAllAthletes").mockResolvedValueOnce({
+      json: vi.fn(() => athletes),
+    } as unknown as ClientResponse<
+      Required<AthleteBasicsDetails>[],
+      200,
+      "json"
+    >);
 
     render(component);
 

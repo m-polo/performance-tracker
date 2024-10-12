@@ -1,9 +1,12 @@
 import { IonApp } from "@ionic/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import axios from "axios";
+import { ClientResponse } from "hono/client";
 import React from "react";
 import { describe, expect, test, vi } from "vitest";
+import * as athleteService from "../../services/athlete.service";
+import * as metricService from "../../services/metric.service";
+import { Athlete, Metric } from "../../shared/interfaces";
 import { athlete, metrics } from "../../test-data";
 import AthleteCompleteInfoModal from "./AthleteCompleteInfoModal";
 
@@ -18,10 +21,21 @@ const component: React.JSX.Element = (
 );
 
 describe("AthleteCompleteInfoModal tests", () => {
+  vi.spyOn(athleteService, "getAthleteById").mockResolvedValueOnce({
+    json: vi.fn(() => athlete),
+  } as unknown as ClientResponse<Required<Athlete>, 200, "json">);
+
   test("should render component with only athlete details", async () => {
-    vi.spyOn(axios, "get")
-      .mockResolvedValueOnce({ data: athlete })
-      .mockResolvedValueOnce({ data: [] });
+    vi.spyOn(
+      metricService,
+      "getFilteredMetricsFromAthlete"
+    ).mockResolvedValueOnce({
+      json: vi.fn(() => []),
+    } as unknown as ClientResponse<
+      (Required<Metric> & { athleteId: number; timestamp: string })[],
+      200,
+      "json"
+    >);
 
     render(component);
 
@@ -33,9 +47,16 @@ describe("AthleteCompleteInfoModal tests", () => {
   });
 
   test("should render component with metrics when athlete has some", async () => {
-    vi.spyOn(axios, "get")
-      .mockResolvedValueOnce({ data: athlete })
-      .mockResolvedValueOnce({ data: metrics });
+    vi.spyOn(
+      metricService,
+      "getFilteredMetricsFromAthlete"
+    ).mockResolvedValueOnce({
+      json: vi.fn(() => metrics),
+    } as unknown as ClientResponse<
+      (Required<Metric> & { athleteId: number; timestamp: string })[],
+      200,
+      "json"
+    >);
 
     render(component);
 
